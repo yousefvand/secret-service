@@ -1,0 +1,7 @@
+tmp/
+logs/
+coverage.*
+secretservice
+secretserviced
+!secretservice/
+!secretserviced/

@@ -1,0 +1,36 @@
+regexp==== RUN .*
+colours=bold blue
+-
+regexp=--- PASS: .*
+colour=green
+-
+regexp=^PASS$
+colours=reverse green
+-
+regexp=^(ok|\?) .*
+colour=magenta
+-
+regexp=^\?
+colour=yellow
+-
+regexp=^ok
+colours=bold green
+-
+regexp=--- FAIL: .*
+colour=red
+-
+regexp=^FAIL.*
+colour=red
+-
+regexp=^FAIL$
+colours=reverse red
+-
+regexp=[^\s]+\.go(:\d+)?
+colour=cyan
+-
+regexp=coverage: .*
+colour=yellow
+-
+regexp=\[no test files\]
+colours=dark yellow
+
