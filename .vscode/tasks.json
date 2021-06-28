@@ -1,0 +1,62 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "stop systemctl service",
+      "type": "shell",
+      "command": "systemctl stop --user secretserviced.service"
+    },
+    {
+      "label": "start systemctl service",
+      "type": "shell",
+      "command": "systemctl start --user secretserviced.service"
+    },
+    {
+      "label": "Delete service home",
+      "type": "shell",
+      "command": "rm -rf ~/.secret-service"
+    },
+    {
+      "label": "Delete logs",
+      "type": "shell",
+      "command": "rm logs/*"
+    },
+    {
+      "label": "Delete coverage",
+      "type": "shell",
+      "command": "rm coverage.*"
+    },
+    {
+      "label": "Delete binaries",
+      "type": "shell",
+      "command": "rm secretservice*"
+    },
+    {
+      "label": "Build binaries",
+      "type": "shell",
+      "command": "echo \"Building \"Secret Service\"...\"; go build -race -o secretserviced cmd/app/secretserviced/main.go; go build -race -o secretservice cmd/app/secretservice/main.go; du -bh secretservice*"
+    },
+    {
+      "label": "loc",
+      "type": "shell",
+      "command": "find . -name \"*.go\" | xargs grep -v \"^$\" | wc -l"
+    },
+    {
+      "label": "Run tests",
+      "type": "shell",
+      "command": "rm -f logs/* ; ENV=TEST MASTERPASSWORD=a012345678901234567890123456789z grc go test -race -cover -timeout 60s ./..."
+    },
+    {
+      "label": "Run service",
+      "type": "shell",
+      "command": "MASTERPASSWORD=a012345678901234567890123456789z go run -race ./cmd/app/secretserviced/main.go"
+    },
+    {
+      "label": "Tests coverage",
+      "type": "shell",
+      "command": "rm -f logs/* ; ENV=TEST MASTERPASSWORD=a012345678901234567890123456789z grc go test -v -timeout 60s ./... -coverprofile=coverage.out && go tool cover -html=coverage.out -o coverage.html && google-chrome-stable -incognito coverage.html"
+    }
+  ]
+}
