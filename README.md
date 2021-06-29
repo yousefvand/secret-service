@@ -8,13 +8,15 @@
 
 Implementation of [Secret Service API](http://standards.freedesktop.org/secret-service)
 
+![logo](assets/secret-service.png)
+
 ## What does this project do?
 
-To use **secret service** you don't need using `KeePassXC` for storing and retrieving you applications credentials anymore, or login every tome to `Skype`, `vscode sync`, `Remmina`...
+By using **secret service**, you don't need to use `KeePassXC` _secretservice_ for storing and retrieving you applications credentials anymore, or login every time to `Skype`, `vscode sync`, `Remmina`...
 
 ## Install
 
-There is an `manage.sh` shellscript that do the job of install/uninstall but here are the details:
+There is a `manage.sh` shellscript that do the job of install/uninstall but here are the details:
 
 You need to copy the binary (`secretserviced`, build the project or download it from [releases](https://github.com/yousefvand/secret-service/releases) page) some where usually `/usr/bin` but if you don't have the permission, `~/.local/bin` is OK too. To build the binary from source code:
 
@@ -88,7 +90,7 @@ In case of sending a `PR` please make sure:
 
 ### TODO
 
-[ ] Configure CI (preferably on Archlinux) 
+[ ] Improve CI
 
 [ ] What's the best way to secure `/etc/systemd/user/secretserviced.service` file
 

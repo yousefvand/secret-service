@@ -1,5 +1,4 @@
 # Maintainer: Remisa Yousefvand <remisa.yousefvand@gmail.com>
-# Needs revision
 
 pkgname=secret-service
 pkgver=0.1.0
@@ -8,23 +7,10 @@ pkgdesc="secret service provides secure ways of storing credentials"
 arch=('i686' 'pentium4' 'x86_64' 'arm' 'armv7h' 'armv6h' 'aarch64')
 url="https://github.com/yousefvand/secret-service"
 license=('MIT')
-groups=()
-depends=(
-#  'wmctrl'
-)
 makedepends=('git' 'go')
 optdepends=('sudo')
-provides=()
-conflicts=()
-replaces=()
-backup=()
-options=()
-install=
-changelog=
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v${pkgver}.tar.gz")
-noextract=()
-md5sums=() #autofill using updpkgsums
-sha256sums=('???')
+sha256sums=('131579e47067c86973acc0323cea020bd9730842992352cae1dffef05f5c3f83')
 
 prepare() {
   export GOPATH="$srcdir"/gopath
@@ -38,11 +24,11 @@ build() {
 
 package() {
   cd "$pkgname-$pkgver"
-    install -Dm755 "$pkgname" "$pkgdir/usr/bin/$pkgname"
+  install -Dm755 secretserviced "$pkgdir/usr/bin/secretserviced"
+  install -Dm644 LICENSE.md "$pkgdir"/usr/share/licenses/"${pkgname}"/LICENSE
 
-if ! [ -f "/etc/systemd/user/secretserviced.service" ]; then
   password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32 ; echo '')
-  cat << EOF | sudo tee "/etc/systemd/user/secretserviced.service" >/dev/null
+  cat >secretserviced.service <<EOF
 [Unit]
 Description=Service to keep secrets of applications
 Documentation=https://github.com/yousefvand/secret-service
@@ -58,5 +44,6 @@ Environment="MASTERPASSWORD=$password"
 WorkingDirectory=/usr/bin/
 ExecStart=/usr/bin/secretserviced
 EOF
-fi
+
+install -Dm755 secretserviced.service "$pkgdir/etc/systemd/user/secretserviced.service"
 }

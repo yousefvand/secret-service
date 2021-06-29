@@ -5,6 +5,7 @@
     "Debugf",
     "Diffie",
     "Errorf",
+    "Gopkg",
     "HKDF",
     "HMAC",
     "Infof",
