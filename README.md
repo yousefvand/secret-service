@@ -90,7 +90,7 @@ In case of sending a `PR` please make sure:
 
 ### TODO
 
-[ ] Configure CI (preferably on Archlinux)
+[ ] Improve CI
 
 [ ] What's the best way to secure `/etc/systemd/user/secretserviced.service` file
 
