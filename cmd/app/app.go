@@ -94,9 +94,9 @@ func Run(ctx context.Context) {
 				exitChan <- 1
 
 			case syscall.SIGTERM:
-				log.Info("***** Received 'SIGTERM' signal. Ignoring signal... *****")
-				// cancel()
-				// <-App.Service.ServiceShutdownChan
+				log.Info("***** Received 'SIGTERM' signal. Exiting... *****")
+				cancel()
+				<-App.Service.ServiceShutdownChan
 				exitChan <- 2
 
 			case syscall.SIGQUIT:
