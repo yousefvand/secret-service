@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Run by: './scripts/publish-aur.sh' from project root
+
 version="v0.1.0"
 
 tempAURDirectory="tmp-aur"
@@ -48,7 +50,7 @@ cd "$tempAURDirectory" || exit 2
 echo "git clone ssh://aur@aur.archlinux.org/secret-service.git"
 git clone ssh://aur@aur.archlinux.org/secret-service.git
 
-#Necessary?
+# Necessary???
 echo "git remote add origin: ssh://aur@aur.archlinux.org/secret-service.git"
 git remote add origin ssh://aur@aur.archlinux.org/secret-service.git
 

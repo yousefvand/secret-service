@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Run by: './scripts/manage.sh' from project root
+
 Version=1.0.0
 
 # >>>>>>>>>>>>>>>>>>>>>>>> functions >>>>>>>>>>>>>>>>>>>>>>>>
@@ -7,12 +9,13 @@ Version=1.0.0
 function install () {
 
   echo "Building binary..."
-  ../go build -race -o secretserviced cmd/app/secretserviced/main.go
+  go build -race -o secretserviced cmd/app/secretserviced/main.go
   echo "Copying binary to /usr/bin"
   # Alternatively: ~/.local/bin
-  sudo cp ../secretserviced /usr/bin
+  sudo cp secretserviced /usr/bin
   echo "Creating systemd UNIT file at /etc/systemd/user"
   # Alternatively: ~/.config/systemd/user/
+  rm secretserviced
 
   echo
 
@@ -97,7 +100,7 @@ function help () {
 # Usage: options=("one" "two" "three"); inputChoice "Choose:" 1 "${options[@]}"; choice=$?; echo "${options[$choice]}"
 function inputChoice() {
   echo "${1}"; shift
-  echo "$(tput dim)"'- Change option: [up/down], Select: [ENTER]' "$(tput sgr0)"
+  echo "$(tput dim)""-Change option: [up/down], Select: [ENTER]""$(tput sgr0)"
   local selected="${1}"; shift
 
   ESC=$(echo -e "\033")
@@ -106,8 +109,8 @@ function inputChoice() {
   cursor_to()        { tput cup $(($1-1)); }
   print_option()     { echo "$(tput sgr0)" "$1" "$(tput sgr0)"; }
   print_selected()   { echo "$(tput rev)" "$1" "$(tput sgr0)"; }
-  get_cursor_row()   { IFS=';' read -sdrR -p $'\E[6n' ROW; echo "${ROW#*[}"; }
-  key_input()        { read -rs -n3 key 2>/dev/null >&2; [[ $key = ${ESC}[A ]] && echo up; [[ $key = ${ESC}[B ]] && echo down; [[ $key = "" ]] && echo enter; }
+  get_cursor_row()   { IFS=';' read -rsdR -p $'\E[6n' ROW COL; echo "${ROW#*[}"; }
+  key_input()        { read -rs -n3 key 2>/dev/null >&2; [[ $key = ${ESC}[A ]] && echo up; [[ $key = $ESC[B ]] && echo down; [[ $key = "" ]] && echo enter; }
 
   for opt; do echo; done
 

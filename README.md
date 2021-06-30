@@ -22,7 +22,7 @@ By using **secret service**, you don't need to use `KeePassXC` _secretservice_ f
 
 ## Manual Installation
 
-There is a `scripts/manage.sh` shellscript that do the job of install/uninstall but here are the details:
+There is a `scripts/manage.sh` shellscript that do the job of install/uninstall (run it by `./scripts/manage.sh`) but here are the details:
 
 You need to copy the binary (`secretserviced`, build the project or download it from [releases](https://github.com/yousefvand/secret-service/releases) page) some where usually `/usr/bin` but if you don't have the permission, `~/.local/bin` is OK too. To build the binary from source code:
 
