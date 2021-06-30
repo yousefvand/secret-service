@@ -7,17 +7,17 @@ Version=1.0.0
 function install () {
 
   echo "Building binary..."
-  go build -race -o secretserviced cmd/app/secretserviced/main.go
+  ../go build -race -o secretserviced cmd/app/secretserviced/main.go
   echo "Copying binary to /usr/bin"
   # Alternatively: ~/.local/bin
-  sudo cp ./secretserviced /usr/bin
+  sudo cp ../secretserviced /usr/bin
   echo "Creating systemd UNIT file at /etc/systemd/user"
   # Alternatively: ~/.config/systemd/user/
 
   echo
 
   if [ -f "/etc/systemd/user/secretserviced.service" ]; then
-    read -ep "systemd UNIT file exist at '/etc/systemd/user/secretserviced.service'.
+    read -rep "systemd UNIT file exist at '/etc/systemd/user/secretserviced.service'.
 Delete it [YOU MAY LOOSE YOUR MASTERPASSWORD!!!] (y/n)? " -i "n" answer
 
     if [[ "${answer}" == "y" ]]; then
@@ -52,7 +52,7 @@ EOF
 echo "enabling service..."
 systemctl enable --now --user secretserviced.service
 
-echo $(tput setaf 2)"Done!"$(tput sgr0)
+echo "$(tput setaf 2)""Done!""$(tput sgr0)"
 
 }
 
@@ -64,7 +64,7 @@ function uninstall () {
   sudo rm /usr/bin/secretserviced
 
   if [ -f "/etc/systemd/user/secretserviced.service" ]; then
-    read -ep "systemd UNIT file exist at '/etc/systemd/user/secretserviced.service'.
+    read -rep "systemd UNIT file exist at '/etc/systemd/user/secretserviced.service'.
 Delete it [YOU MAY LOOSE YOUR MASTERPASSWORD!!!] (y/n)? " -i "n" answer
 
     if [[ "${answer}" == "y" ]]; then
@@ -74,7 +74,7 @@ Delete it [YOU MAY LOOSE YOUR MASTERPASSWORD!!!] (y/n)? " -i "n" answer
     
   fi
 
-  echo $(tput setaf 2)"Done!"$(tput sgr0)
+  echo "$(tput setaf 2)""Done!""$(tput sgr0)"
   
 }
 
@@ -97,22 +97,23 @@ function help () {
 # Usage: options=("one" "two" "three"); inputChoice "Choose:" 1 "${options[@]}"; choice=$?; echo "${options[$choice]}"
 function inputChoice() {
   echo "${1}"; shift
-  echo $(tput dim)-"Change option: [up/down], Select: [ENTER]" $(tput sgr0)
+  echo "$(tput dim)"'- Change option: [up/down], Select: [ENTER]' "$(tput sgr0)"
   local selected="${1}"; shift
 
   ESC=$(echo -e "\033")
   cursor_blink_on()  { tput cnorm; }
   cursor_blink_off() { tput civis; }
   cursor_to()        { tput cup $(($1-1)); }
-  print_option()     { echo $(tput sgr0) "$1" $(tput sgr0); }
-  print_selected()   { echo $(tput rev) "$1" $(tput sgr0); }
-  get_cursor_row()   { IFS=';' read -sdR -p $'\E[6n' ROW COL; echo ${ROW#*[}; }
-  key_input()        { read -s -n3 key 2>/dev/null >&2; [[ $key = $ESC[A ]] && echo up; [[ $key = $ESC[B ]] && echo down; [[ $key = "" ]] && echo enter; }
+  print_option()     { echo "$(tput sgr0)" "$1" "$(tput sgr0)"; }
+  print_selected()   { echo "$(tput rev)" "$1" "$(tput sgr0)"; }
+  get_cursor_row()   { IFS=';' read -sdrR -p $'\E[6n' ROW; echo "${ROW#*[}"; }
+  key_input()        { read -rs -n3 key 2>/dev/null >&2; [[ $key = ${ESC}[A ]] && echo up; [[ $key = ${ESC}[B ]] && echo down; [[ $key = "" ]] && echo enter; }
 
   for opt; do echo; done
 
-  local lastrow=$(get_cursor_row)
-  local startrow=$(($lastrow - $#))
+  local lastrow
+  lastrow=$(get_cursor_row)
+  local startrow=$((lastrow - $#))
   trap "cursor_blink_on; echo; echo; exit" 2
   cursor_blink_off
 
@@ -121,8 +122,8 @@ function inputChoice() {
   while true; do
     local idx=0
     for opt; do
-      cursor_to $(($startrow + $idx))
-      if [ ${idx} -eq ${selected} ]; then
+      cursor_to $((startrow + idx))
+      if [ ${idx} -eq "${selected}" ]; then
         print_selected "${opt}"
       else
         print_option "${opt}"

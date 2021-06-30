@@ -14,9 +14,15 @@ Implementation of [Secret Service API](http://standards.freedesktop.org/secret-s
 
 By using **secret service**, you don't need to use `KeePassXC` _secretservice_ for storing and retrieving you applications credentials anymore, or login every time to `Skype`, `vscode sync`, `Remmina`...
 
-## Install
+## Installation
 
-There is a `manage.sh` shellscript that do the job of install/uninstall but here are the details:
+- Archlinux: There is an [AUR package](TODO) named `secret-service`.
+- Debian: _TODO_ deb package
+- RedHat: _TODO_ rpm package
+
+## Manual Installation
+
+There is a `scripts/manage.sh` shellscript that do the job of install/uninstall but here are the details:
 
 You need to copy the binary (`secretserviced`, build the project or download it from [releases](https://github.com/yousefvand/secret-service/releases) page) some where usually `/usr/bin` but if you don't have the permission, `~/.local/bin` is OK too. To build the binary from source code:
 
@@ -45,7 +51,7 @@ WorkingDirectory=/usr/bin/
 ExecStart=/usr/bin/secretserviced
 ```
 
-**CAUTION**: `MASTERPASSWORD` is very important, don't loose it. `manage.sh` would generate a random `32` character password automatically. If you don't use the `manage.sh` shellscript, it is up to you to set the password and it should be **EXACTLY** `32` characters length.
+**CAUTION**: `MASTERPASSWORD` is very important, don't loose it. `scripts/manage.sh` would generate a random `32` character password automatically. If you don't use the `scripts/manage.sh` shellscript, it is up to you to set the password and it should be **EXACTLY** `32` characters length.
 
 Now start the service:
 
