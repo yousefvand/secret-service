@@ -1,0 +1,7 @@
+README file: add aur package link
+USE sed to change pkgver in PKGBUID from publish-aur.sh 
+install namcap
+CI change go version
+CI add -race
+sudo pacman -S namcap
+

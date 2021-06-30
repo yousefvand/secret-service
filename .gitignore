@@ -1,5 +1,6 @@
 tmp/
 logs/
+tmp-aur/
 coverage.*
 secretservice
 secretserviced
