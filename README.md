@@ -16,7 +16,7 @@ By using **secret service**, you don't need to use `KeePassXC` _secretservice_ f
 
 ## Installation
 
-- Archlinux: There is an [AUR package](TODO) named `secret-service`.
+- Archlinux: There is an [AUR package](https://aur.archlinux.org/packages/secret-service/) named `secret-service`.
 - Debian: _TODO_ deb package
 - RedHat: _TODO_ rpm package
 
