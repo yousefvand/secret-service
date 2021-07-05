@@ -85,13 +85,13 @@ If service refuses to start and you see `OS` exit code `5` in logs, it means som
 
 ## Contribution
 
-This project is in its infancy and as it is my first golang project there are many design and code problems. I do appreciate suggestions and `PR`s. If you can get done any item from `TODO` list, you are welcome. This list will be updated based on new insights and user issues.
+This project is in its infancy and as it is my first golang project there are many design and code problems. I do appreciate suggestions and **PR**s. If you can get done any item from `TODO` list, you are welcome. This list will be updated based on new insights and user issues.
 
-In case of sending a `PR` please make sure:
+In case of sending a **PR** please make sure:
 
 1. You are addressing just one issue per PR.
 2. Completely describe the problem and your solution in plain English.
-3. Send PRs to `dev` branch and make sure all tests have passed.
+3. Don't send your PRs to `main` branch, create a new branch based on your changes and make sure all tests are passed.
 4. If any new test is needed based on your PR, please write the test as well.
 
 ### TODO
