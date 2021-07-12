@@ -96,10 +96,10 @@ In case of sending a **PR** please make sure:
 
 ### TODO
 
-[ ] Improve CI
+ - [ ] Improve CI
 
-[ ] What's the best way to secure `/etc/systemd/user/secretserviced.service` file
+ - [ ] What's the best way to secure `/etc/systemd/user/secretserviced.service` file
 
-[ ] deb, rpm, AppImage packages
+ - [ ] deb, rpm, AppImage packages
 
-[ ] ...
+ - [ ] ...
