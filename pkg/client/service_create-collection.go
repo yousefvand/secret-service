@@ -43,6 +43,8 @@ func (client *Client) CreateCollection(properties map[string]dbus.Variant,
 	collection.Alias = alias
 	collection.SetProperties(properties)
 	collection.ObjectPath = collectionObjectPath
+	collection.Created, _ = collection.PropertyCreated()
+	collection.Modified, _ = collection.PropertyModified()
 	client.AddCollection(collection)
 
 	return collection, prompt, nil

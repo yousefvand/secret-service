@@ -38,12 +38,14 @@ func (client *Client) Lock(
 			if !collection.Locked {
 				if collection.ObjectPath == objectPath {
 					collection.Lock()
+					collection.Modified, _ = collection.PropertyModified()
 				}
 			}
 			for _, item := range collection.Items {
 				if !item.Locked {
 					if item.ObjectPath == objectPath {
 						item.Lock()
+						item.Modified, _ = item.PropertyModified()
 					}
 				}
 			}

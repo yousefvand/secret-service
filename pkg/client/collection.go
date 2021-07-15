@@ -289,7 +289,7 @@ func (collection *Collection) PropertyGetLabel() (string, error) {
 		return "", fmt.Errorf("expected 'Label' to be of type 'string', got: '%T'", variant.Value())
 	}
 
-	// FIXME
+	// BUG
 	// if collection.Label != label {
 	// 	panic(fmt.Sprintf("Collection 'Label' property is out of sync. Object: %v, dbus: %v",
 	// 		collection.Label, label))

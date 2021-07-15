@@ -73,7 +73,6 @@ func (service *Service) Start(ctx context.Context) {
 	// create SecretService interface on dbus path: '/org/freedesktop/secrets'
 	dbusService(service)
 
-	// FIXME: Uncomment
 	go RestoreData(service)
 	<-service.DbLoadedChan
 	go PersistData(ctx, service)

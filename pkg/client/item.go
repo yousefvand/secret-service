@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/godbus/dbus/v5"
 )
@@ -18,8 +17,8 @@ func NewItem(parent *Collection) *Item {
 	item.Secret = NewSecret(item)
 	item.LockMutex = new(sync.Mutex)
 	item.LookupAttributesMutex = new(sync.RWMutex)
-	item.Created = uint64(time.Now().Unix())
-	item.Modified = item.Created
+	// item.Created = uint64(time.Now().Unix())
+	// item.Modified = item.Created
 	// TODO: Update
 	return item
 }
@@ -226,11 +225,6 @@ func (item *Item) PropertyCreated() (uint64, error) {
 			variant.Value())
 	}
 
-	if item.Created != created {
-		panic(fmt.Sprintf("Item 'Created' property is out of sync. Object: %v, dbus: %v",
-			item.Created, created))
-	}
-
 	return created, nil
 }
 
@@ -248,11 +242,6 @@ func (item *Item) PropertyModified() (uint64, error) {
 	if !ok {
 		return 0, fmt.Errorf("expected 'Modified' to be of type 'uint64', got: '%T'",
 			variant.Value())
-	}
-
-	if item.Modified != modified {
-		panic(fmt.Sprintf("Item 'Created' property is out of sync. Object: %v, dbus: %v",
-			item.Modified, modified))
 	}
 
 	return modified, nil

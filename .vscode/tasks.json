@@ -24,6 +24,11 @@
       "command": "rm logs/*"
     },
     {
+      "label": "Clean test cache",
+      "type": "shell",
+      "command": "go clean -testcache"
+    },
+    {
       "label": "Delete coverage",
       "type": "shell",
       "command": "rm coverage.*"

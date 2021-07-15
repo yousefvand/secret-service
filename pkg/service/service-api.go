@@ -205,7 +205,7 @@ func (service *Service) CreateCollection(properties map[string]dbus.Variant,
 		"alias":      alias,
 	}).Trace("Method called by client")
 
-	if len(properties) == 0 { // FIXME: return error
+	if len(properties) == 0 {
 		log.Warn("Client asked to create a collection with empty 'properties'")
 	}
 
@@ -282,8 +282,8 @@ func (service *Service) SearchItems(
 
 	for _, collection := range service.Collections {
 		for _, item := range collection.Items {
-			// FIXME: Singe or Full match (FullMatch works with skype)
-			if IsMapSubsetFullMatch(item.LookupAttributes, // FIXME SingleMatch or FullMatch
+			// Single or Full match? FullMatch works
+			if IsMapSubsetFullMatch(item.LookupAttributes,
 				attributes, collection.ItemsMutex) {
 
 				log.Debugf("SearchItems found match. Label: %s, Path: %s", item.Label, item.ObjectPath)
@@ -383,7 +383,14 @@ func (service *Service) Lock(
 			if collection.ObjectPath == object {
 				if !collection.Locked {
 					collection.Lock()
-					// FIXME: EMit signal 'SignalCollectionChanged' and update modified time?
+
+					collection.DataMutex.Lock()
+					collection.Modified = Epoch()
+					collection.DbusProperties.SetMust("org.freedesktop.Secret.Collection",
+						"Modified", collection.Modified)
+					collection.DataMutex.Unlock()
+					collection.SignalCollectionChanged()
+
 					lockedObjects = append(lockedObjects, collection.ObjectPath)
 				}
 			}
@@ -391,7 +398,14 @@ func (service *Service) Lock(
 				if item.ObjectPath == object {
 					if !item.Locked {
 						item.Lock()
-						// FIXME: EMit signal 'SignalItemChanged' and update modified time?
+
+						item.DataMutex.Lock()
+						item.Modified = Epoch()
+						item.DbusProperties.SetMust("org.freedesktop.Secret.Item",
+							"Modified", item.Modified)
+						item.DataMutex.Unlock()
+						item.SignalItemChanged()
+
 						lockedObjects = append(lockedObjects, item.ObjectPath)
 					}
 				}
