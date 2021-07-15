@@ -27,29 +27,29 @@ func TestClient_Lock(t *testing.T) {
 		// collection1 items
 		secretApi11 := client.NewSecretApi()
 		secretApi11.Session = session.ObjectPath
-		item11, _, _ := collection1.CreateItem(map[string]dbus.Variant{}, secretApi11, true)
+		item11, _, _ := collection1.CreateItem(map[string]dbus.Variant{"a": dbus.MakeVariant("b")}, secretApi11, true)
 
 		secretApi12 := client.NewSecretApi()
 		secretApi12.Session = session.ObjectPath
-		item12, _, _ := collection1.CreateItem(map[string]dbus.Variant{}, secretApi12, true)
+		item12, _, _ := collection1.CreateItem(map[string]dbus.Variant{"c": dbus.MakeVariant("d")}, secretApi12, true)
 
 		// collection2 items
 		secretApi21 := client.NewSecretApi()
 		secretApi21.Session = session.ObjectPath
-		item21, _, _ := collection2.CreateItem(map[string]dbus.Variant{}, secretApi21, true)
+		item21, _, _ := collection2.CreateItem(map[string]dbus.Variant{"e": dbus.MakeVariant("f")}, secretApi21, true)
 
 		secretApi22 := client.NewSecretApi()
 		secretApi22.Session = session.ObjectPath
-		item22, _, _ := collection2.CreateItem(map[string]dbus.Variant{}, secretApi22, true)
+		item22, _, _ := collection2.CreateItem(map[string]dbus.Variant{"g": dbus.MakeVariant("h")}, secretApi22, true)
 
 		// collection3 items
 		secretApi31 := client.NewSecretApi()
 		secretApi31.Session = session.ObjectPath
-		item31, _, _ := collection3.CreateItem(map[string]dbus.Variant{}, secretApi31, true)
+		item31, _, _ := collection3.CreateItem(map[string]dbus.Variant{"j": dbus.MakeVariant("k")}, secretApi31, true)
 
 		secretApi32 := client.NewSecretApi()
 		secretApi32.Session = session.ObjectPath
-		item32, _, _ := collection3.CreateItem(map[string]dbus.Variant{}, secretApi32, true)
+		item32, _, _ := collection3.CreateItem(map[string]dbus.Variant{"m": dbus.MakeVariant("n")}, secretApi32, true)
 
 		lockCandidates := []dbus.ObjectPath{
 			collection1.ObjectPath,
@@ -170,7 +170,7 @@ func TestClient_Lock(t *testing.T) {
 				propertyLockedVariant.Value())
 		}
 
-		// FIXME: Probably a godbus bug
+		// BUG: Probably a godbus bug
 		if !propertyLocked {
 			t.Log("Expected collection1 to be locked but it is not (godbus bug?)")
 		}
