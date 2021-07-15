@@ -100,7 +100,8 @@ func (c *Collection) CreateItem(properties map[string]dbus.Variant,
 
 	if len(properties) == 0 {
 		log.Warn("Client asked to create an item with empty 'properties' (no Label, no Attributes)")
-		return "", "/", ApiErrorNotSupported()
+		// DOcumentation is silent about this situation so let it be allowed:
+		// return "", "/", ApiErrorNotSupported()
 	}
 	item := NewItem(c)
 	item.SetProperties(properties)
