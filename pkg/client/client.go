@@ -214,15 +214,28 @@ func (client *Client) PropertyGetCollections() ([]string, error) {
 		return nil, errors.New("Error getting property 'Collections': " + err.Error())
 	}
 
-	result, ok := variant.Value().([]string)
+	collections, ok := variant.Value().([]string)
 
 	if !ok {
 		return nil, fmt.Errorf("invalid 'Collections' property type. Expected '[]string', got '%T'", variant.Value())
 	}
 
-	sort.Strings(result)
+	sort.Strings(collections)
 
-	return result, nil
+	var clientCollections []string
+	for k := range client.Collections {
+		clientCollections = append(clientCollections, k)
+	}
+
+	sort.Strings(clientCollections)
+
+	// WON'T FIX: This is OK. Not all collections on dbus created by a single client
+	// if !reflect.DeepEqual(clientCollections, collections) {
+	// 	panic(fmt.Sprintf("Client 'Collections' property is out of sync. Object: %v, dbus: %v",
+	// 		clientCollections, collections))
+	// }
+
+	return collections, nil
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Properties <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
