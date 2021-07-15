@@ -452,11 +452,6 @@ func (service *Service) GetSecrets(items []dbus.ObjectPath,
 					secretApi.Value = cipherData
 					result[itemPath] = secretApi
 
-					log.WithFields(log.Fields{ // TODO: Remove me.
-						"item plain secret":   item.Secret.PlainSecret,
-						"item secretApi":      item.Secret.SecretApi,
-						"generated secretApi": secretApi,
-					}).Debug("FIXME: Are they the same?")
 				}
 			}
 		}
