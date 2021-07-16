@@ -7,7 +7,6 @@ import (
 
 	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/prop"
-	"github.com/monnand/dhkx"
 )
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Service >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
@@ -74,19 +73,8 @@ type Session struct {
 	ObjectPath dbus.ObjectPath
 	// encryption algorithm type
 	EncryptionAlgorithm EncryptionAlgorithm
-	// Diffie Hellman Key-exchange filtered or unexported fields
-	Group *dhkx.DHGroup
-	// session own public key. 128 bytes (1024 bits)
-	PublicKey []byte
-	// session private key (cannot be used directly for encryption)
-	PrivateKey *dhkx.DHKey
-	// share key between service and client for encryption
-	// (cannot be used directly for encryption)
-	SharedKey []byte
 	// symmetric key used or AES encryption/decryption. Needs IV as well
 	SymmetricKey []byte // 16 bytes (128 bits)
-	// client public key used or AES encryption/decryption
-	ClientPublicKey []byte // 128 bytes (1024 bits)
 	// Sessions don't need to get persistent in db so no need for 'Update'
 }
 

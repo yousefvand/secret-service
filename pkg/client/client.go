@@ -85,8 +85,6 @@ func (client *Client) Call(destination string, dbusPath dbus.ObjectPath,
 	return response, nil
 }
 
-// TODO: write a WatchSignal method for each interface
-
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Session >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 
 // AddSession adds a new session to client's session map

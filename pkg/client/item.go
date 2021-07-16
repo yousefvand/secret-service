@@ -17,9 +17,7 @@ func NewItem(parent *Collection) *Item {
 	item.Secret = NewSecret(item)
 	item.LockMutex = new(sync.Mutex)
 	item.LookupAttributesMutex = new(sync.RWMutex)
-	// item.Created = uint64(time.Now().Unix())
-	// item.Modified = item.Created
-	// TODO: Update
+
 	return item
 }
 

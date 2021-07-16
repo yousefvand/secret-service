@@ -143,7 +143,9 @@ func introspectCollectionByPath(collection *Collection, locked bool, created uin
 						// }
 						collection.DataMutex.Unlock()
 					}
+					collection.DataMutex.Lock()
 					collection.Properties[p.Name] = dbus.MakeVariant(p.Value)
+					collection.DataMutex.Unlock()
 					log.Infof("Property '%v' of collection '%v' changed to: %v",
 						p.Name, collection.ObjectPath, p.Value)
 

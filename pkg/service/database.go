@@ -189,7 +189,6 @@ func PersistData(ctx context.Context, service *Service) {
 	for {
 		select {
 		case <-ctx.Done():
-			// TODO: Save data before shutting down? All changes already covered!
 			return
 		default:
 			<-service.SaveSignalChan // blocking until signal receives

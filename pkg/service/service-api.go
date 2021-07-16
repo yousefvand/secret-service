@@ -46,12 +46,6 @@ func (service *Service) OpenSession(algorithm string,
 		"input":     input.Value(),
 	}).Trace("Method called by client")
 
-	// TODO: Remove
-	// if service.Locked {
-	// 	log.Warn("Cannot 'OpenSession' when service is locked.")
-	// 	return dbus.MakeVariant(""), dbus.ObjectPath("/"), ApiErrorIsLocked()
-	// }
-
 	log.Debugf("Client suggested '%s' algorithm", algorithm)
 
 	// if OpenSession succeeds all related information are stored in a session
@@ -95,25 +89,16 @@ func (service *Service) OpenSession(algorithm string,
 			return dbus.MakeVariant(""), dbus.ObjectPath("/"),
 				DbusErrorCallFailed("Diffie–Hellman group creation failed. Error: " + err.Error())
 		}
-		session.Group = group // TODO: Remove me (not needed)
+
 		privateKey, err := group.GeneratePrivateKey(rand.Reader)
 		if err != nil {
 			log.Panicf("Diffie–Hellman private key generation failed. Error: %s", err.Error())
 			return dbus.MakeVariant(""), dbus.ObjectPath("/"),
 				DbusErrorCallFailed("Diffie–Hellman private key generation failed. Error: " + err.Error())
 		}
-		session.PrivateKey = privateKey // // TODO: Remove me (not needed)
 
-		// TODO: big endian
-		/*
-			b := []byte{...}
-			for i := 0; i < len(b)/2; i++ {
-			    b[i], b[len(b)-i-1] = b[len(b)-i-1], b[i]
-			}
-		*/
-		session.PublicKey = privateKey.Bytes() // TODO: Remove me (not needed)
+		publicKey := privateKey.Bytes()
 
-		// TODO: Check convertion validity
 		var clientPublicKey []byte
 		err = dbus.Store([]interface{}{input.Value()}, &clientPublicKey)
 		if err != nil {
@@ -133,22 +118,19 @@ func (service *Service) OpenSession(algorithm string,
 					strconv.Itoa(len(clientPublicKey)) + " bytes")
 		}
 
-		// TODO: Remove me (not needed)
-		session.ClientPublicKey = clientPublicKey // dhkx.NewPublicKey(clientPublicKey)
-
-		sharedKey, err := group.ComputeKey(dhkx.NewPublicKey(clientPublicKey), session.PrivateKey)
+		sharedKey, err := group.ComputeKey(dhkx.NewPublicKey(clientPublicKey), privateKey)
 		if err != nil {
 			log.Panicf("Diffie–Hellman shared key generation failed. Error: %s", err.Error())
 			return dbus.MakeVariant(""), dbus.ObjectPath("/"),
 				DbusErrorCallFailed("Diffie–Hellman shared key generation failed. Error: " + err.Error())
 		}
-		// TODO: Remove me (not needed)
-		session.SharedKey = sharedKey.Bytes()
 
-		log.Tracef("Shared key: %v", session.SharedKey)
-		log.Tracef("Shared key length: %v", len(session.SharedKey))
+		sessionSharedKey := sharedKey.Bytes()
 
-		hkdf := hkdf.New(sha256.New, session.SharedKey, nil, nil)
+		log.Tracef("Shared key: %v", sessionSharedKey)
+		log.Tracef("Shared key length: %v", len(sessionSharedKey))
+
+		hkdf := hkdf.New(sha256.New, sessionSharedKey, nil, nil)
 		symmetricKey := make([]byte, aes.BlockSize) // 16 * 8 = 128 bit
 		n, err := io.ReadFull(hkdf, symmetricKey)
 		if n != aes.BlockSize {
@@ -173,8 +155,7 @@ func (service *Service) OpenSession(algorithm string,
 
 		service.AddSession(session)
 
-		// TODO: make sure it is big endian
-		return dbus.MakeVariant(session.PublicKey), dbus.ObjectPath(path), nil // end of successful negotiation
+		return dbus.MakeVariant(publicKey), dbus.ObjectPath(path), nil // end of successful negotiation
 
 	default: // algorithm is not 'plain' or 'dh-ietf1024-sha256-aes128-cbc-pkcs7'
 		log.Warnf("The '%s' algorithm suggested by client is not supported", algorithm)
@@ -235,7 +216,7 @@ func (service *Service) CreateCollection(properties map[string]dbus.Variant,
 
 		epoch := Epoch()
 		service.AddCollection(collection, false, epoch, epoch, true)
-		collection.SignalCollectionCreated() // TODO: if it is default collection -> no signal
+		collection.SignalCollectionCreated()
 
 		if collection.Alias == "" {
 			log.Infof("New collection with no alias at: %v", collection.ObjectPath)

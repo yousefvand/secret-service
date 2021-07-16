@@ -44,6 +44,7 @@ const (
 	Unsupported
 )
 
+// TODO: Remove unnecessary fields
 // Session data structure
 type Session struct {
 	// reference to parent (client)
