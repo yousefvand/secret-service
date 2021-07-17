@@ -28,6 +28,17 @@ func (client *Client) OpenSession(algorithm EncryptionAlgorithm) (*Session, erro
 	session := NewSession(client)
 	session.EncryptionAlgorithm = algorithm
 
+	group, errGroup := dhkx.GetGroup(2) // 2 -> 1024 bit (128 bytes) secret key
+	if errGroup != nil {
+		return nil, errors.New("Diffie–Hellman group creation failed. Error: " + errGroup.Error())
+	}
+
+	privateKey, errPrivateKey := group.GeneratePrivateKey(rand.Reader)
+	if errPrivateKey != nil {
+		return nil,
+			errors.New("Diffie–Hellman private key generation failed. Error: " + errPrivateKey.Error())
+	}
+
 	switch algorithm {
 
 	case Plain:
@@ -36,21 +47,7 @@ func (client *Client) OpenSession(algorithm EncryptionAlgorithm) (*Session, erro
 
 	case Dh_ietf1024_sha256_aes128_cbc_pkcs7:
 		algorithmInUse = "dh-ietf1024-sha256-aes128-cbc-pkcs7"
-
-		group, err := dhkx.GetGroup(2) // 2 -> 1024 bit (128 bytes) secret key
-		if err != nil {
-			return nil, errors.New("Diffie–Hellman group creation failed. Error: " + err.Error())
-		}
-		session.Group = group
-		privateKey, err := group.GeneratePrivateKey(rand.Reader)
-		if err != nil {
-			return nil,
-				errors.New("Diffie–Hellman private key generation failed. Error: " + err.Error())
-		}
-		session.PrivateKey = privateKey
-		// TODO: big endian?
-		session.PublicKey = privateKey.Bytes()
-		input = dbus.MakeVariant(session.PublicKey)
+		input = dbus.MakeVariant(privateKey.Bytes()) // own public key
 
 	default: // Unsupported (used in tests)
 		algorithmInUse = "unsupported"
@@ -80,7 +77,6 @@ func (client *Client) OpenSession(algorithm EncryptionAlgorithm) (*Session, erro
 	}
 
 	if algorithm == Dh_ietf1024_sha256_aes128_cbc_pkcs7 {
-		// TODO: Check convertion validity
 		var servicePublicKey []byte
 		err = dbus.Store([]interface{}{output.Value()}, &servicePublicKey)
 		if err != nil {
@@ -92,15 +88,14 @@ func (client *Client) OpenSession(algorithm EncryptionAlgorithm) (*Session, erro
 		}
 		session.ServicePublicKey = servicePublicKey // dhkx.NewPublicKey(clientPublicKey)
 
-		sharedKey, err := session.Group.ComputeKey(dhkx.NewPublicKey(servicePublicKey),
-			session.PrivateKey)
+		sharedKey, err := group.ComputeKey(dhkx.NewPublicKey(servicePublicKey), privateKey)
 		if err != nil {
 			return nil,
 				errors.New("Diffie–Hellman shared key generation failed. Error: " + err.Error())
 		}
-		session.SharedKey = sharedKey.Bytes()
+		sessionSharedKey := sharedKey.Bytes()
 
-		hkdf := hkdf.New(sha256.New, session.SharedKey, nil, nil)
+		hkdf := hkdf.New(sha256.New, sessionSharedKey, nil, nil)
 		symmetricKey := make([]byte, aes.BlockSize) // 16 * 8 = 128 bit
 		n, err := io.ReadFull(hkdf, symmetricKey)
 		if n != aes.BlockSize {

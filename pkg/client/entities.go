@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/godbus/dbus/v5"
-	"github.com/monnand/dhkx"
 )
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Client >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
@@ -44,7 +43,6 @@ const (
 	Unsupported
 )
 
-// TODO: Remove unnecessary fields
 // Session data structure
 type Session struct {
 	// reference to parent (client)
@@ -53,15 +51,6 @@ type Session struct {
 	ObjectPath dbus.ObjectPath
 	// encryption algorithm type
 	EncryptionAlgorithm EncryptionAlgorithm
-	// Diffie Hellman Key-exchange filtered or unexported fields
-	Group *dhkx.DHGroup
-	// session own public key. 128 bytes (1024 bits)
-	PublicKey []byte
-	// session private key (cannot be used directly for encryption)
-	PrivateKey *dhkx.DHKey
-	// share key between client and service for encryption
-	// (cannot be used directly for encryption)
-	SharedKey []byte
 	// symmetric key used or AES encryption/decryption. Needs IV as well
 	SymmetricKey []byte // 16 bytes (128 bits)
 	// client public key used or AES encryption/decryption
