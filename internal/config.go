@@ -2,6 +2,7 @@ package internal
 
 import (
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -9,6 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
+
+const configVersion string = "0.2.0"
 
 type LogLevel uint8
 
@@ -40,6 +43,8 @@ type Config struct {
 	Encryption bool `yaml:"encryption"`
 	// Desktop notification icon
 	Icon string `yaml:"icon"`
+	// Prompting when necessary
+	Prompting bool `yaml:"prompting"`
 	// Absolute path to log file
 	LogFile string `yaml:"logFile"`
 	// Logger is enabled or not
@@ -89,6 +94,12 @@ func (config *Config) Load(app *AppData) {
 		_ = yaml.Unmarshal(data, config)
 	}
 
+	// old config, upgrade
+	if config.Version != configVersion {
+		os.Rename(filePath, filepath.Join(serviceHome, "config.yaml.bak"))
+		config.Load(app)
+	}
+
 	fillMissingConfigurations(config)
 }
 
@@ -118,7 +129,7 @@ func (config *Config) Save() error {
 func fillMissingConfigurations(config *Config) *Config {
 
 	if config.Version == "" {
-		config.Icon = "0.1.0"
+		config.Version = "0.2.0"
 	}
 
 	if config.Icon == "" {
@@ -168,7 +179,7 @@ func createDefaultConfig(appHome string) {
 
 // template for configuration file with default values
 var defaultConfig []byte = []byte(`# Config file version
-version: '0.1.0'
+version: '0.2.0'
 
 # Encrypt database using AES-CBC-256
 # You need to set a MASTERPASSWORD in '/etc/systemd/user/secretserviced.service'
@@ -178,9 +189,8 @@ encryption: true
 # A system icon as string i.e. "flag" used in notifications
 icon: 'view-private'
 
-# 0-6  where 6 is the most verbose and 0 logs very severe events
-# 0: Panic, 1: Fatal, 2: Error, 3: Warning, 4: Info, 5: Debug, 6: Trace
-logLevel: 6
+# Prompting when necessary
+prompting: false
 
 # Absolute path to log file
 logFile: ''
@@ -190,6 +200,10 @@ logging: true
 
 # Log file format: 'text' or 'json'
 logFormat: 'text'
+
+# 0-6  where 6 is the most verbose and 0 logs very severe events
+# 0: Panic, 1: Fatal, 2: Error, 3: Warning, 4: Info, 5: Debug, 6: Trace
+logLevel: 6
 
 # Maximum log size in MB
 logMaxSize: 5
