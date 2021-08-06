@@ -96,7 +96,8 @@ func (config *Config) Load(app *AppData) {
 
 	// old config, upgrade
 	if config.Version != configVersion {
-		os.Rename(filePath, filepath.Join(serviceHome, "config.yaml.bak"))
+		os.Rename(filePath, filepath.Join(serviceHome,
+			time.Now().Format("2006.01.02-15:04:05")+"-"+"config.yaml.bak"))
 		config.Load(app)
 	}
 
@@ -129,7 +130,7 @@ func (config *Config) Save() error {
 func fillMissingConfigurations(config *Config) *Config {
 
 	if config.Version == "" {
-		config.Version = "0.2.0"
+		config.Version = configVersion
 	}
 
 	if config.Icon == "" {
@@ -137,9 +138,9 @@ func fillMissingConfigurations(config *Config) *Config {
 	}
 
 	if config.LogLevel > 6 {
-		config.LogLevel = LogLevel(3) // Default: Warn
+		config.LogLevel = LogLevel(4) // Default: Info
 	}
-	// TODO: Complete
+
 	if exist, err := fileOrFolderExists(filepath.Dir(config.LogFile)); err != nil || !exist {
 		config.LogFile = ""
 	}
@@ -179,7 +180,7 @@ func createDefaultConfig(appHome string) {
 
 // template for configuration file with default values
 var defaultConfig []byte = []byte(`# Config file version
-version: '0.2.0'
+version: 0.2.0
 
 # Encrypt database using AES-CBC-256
 # You need to set a MASTERPASSWORD in '/etc/systemd/user/secretserviced.service'
@@ -201,9 +202,9 @@ logging: true
 # Log file format: 'text' or 'json'
 logFormat: 'text'
 
-# 0-6  where 6 is the most verbose and 0 logs very severe events
+# 0-6  where 6 is the most verbose and 0 logs very severe events. Default 4
 # 0: Panic, 1: Fatal, 2: Error, 3: Warning, 4: Info, 5: Debug, 6: Trace
-logLevel: 6
+logLevel: 4
 
 # Maximum log size in MB
 logMaxSize: 5
