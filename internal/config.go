@@ -96,9 +96,11 @@ func (config *Config) Load(app *AppData) {
 
 	// old config, upgrade
 	if config.Version != configVersion {
-		os.Rename(filePath, filepath.Join(serviceHome,
-			time.Now().Format("2006.01.02-15:04:05")+"-"+"config.yaml.bak"))
+		newName := time.Now().Format("2006.01.02-15:04:05") + "-" + "config.yaml.bak"
+		os.Rename(filePath, filepath.Join(serviceHome, newName))
 		config.Load(app)
+
+		log.Warnf("Config file upgraded. Old config file renamed to %s", newName)
 	}
 
 	fillMissingConfigurations(config)
