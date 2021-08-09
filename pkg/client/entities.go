@@ -20,6 +20,8 @@ type Client struct {
 	SessionsMutex *sync.RWMutex
 	// sessions map. key: session dbus object path, value: session object
 	Sessions map[string]*Session
+	// Cli session
+	CliSession *CliSession
 	// Mutex for lock/unlock Collections map
 	CollectionsMutex *sync.RWMutex
 	// Collections map. key: Collection dbus object path, value: Collection object
@@ -55,6 +57,15 @@ type Session struct {
 	SymmetricKey []byte // 16 bytes (128 bits)
 	// client public key used or AES encryption/decryption
 	ServicePublicKey []byte // 128 bytes (1024 bits)
+}
+
+type CliSession struct {
+	// reference to parent (client)
+	Parent *Client
+	// symmetric key used or AES encryption/decryption. Needs IV as well
+	SymmetricKey []byte // 16 bytes (128 bits)
+	// cookie
+	Cookie string
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Session <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */

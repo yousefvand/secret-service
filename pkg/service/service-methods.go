@@ -70,6 +70,7 @@ func (service *Service) Start(ctx context.Context) {
 	/* create deafult collection at: '/org/freedesktop/secrets/aliases/default' */
 	epoch := Epoch()
 	DefaultCollection(service, false, epoch, epoch)
+	dbusSecretService(NewSecretService(service)) // TODO: temp
 	// create SecretService interface on dbus path: '/org/freedesktop/secrets'
 	dbusService(service)
 

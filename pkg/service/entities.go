@@ -32,6 +32,8 @@ type Service struct {
 	EncryptDatabase bool
 	// Mutex for lock/unlock Sessions map
 	SessionsMutex *sync.RWMutex
+	// Cli Session
+	CliSession *CliSession
 	// sessions map. key: session dbus object path, value: session object
 	Sessions map[string]*Session
 	// Mutex for lock/unlock Collections map
@@ -48,6 +50,11 @@ type Service struct {
 	ServiceShutdownChan chan struct{}
 	// inform database has loaded
 	DbLoadedChan chan struct{}
+}
+
+type SecretService struct {
+	// reference to parent (service)
+	Parent *Service
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Service <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
@@ -76,6 +83,13 @@ type Session struct {
 	// symmetric key used or AES encryption/decryption. Needs IV as well
 	SymmetricKey []byte // 16 bytes (128 bits)
 	// Sessions don't need to get persistent in db so no need for 'Update'
+}
+
+type CliSession struct {
+	// reference to parent (service)
+	Parent *Service
+	// symmetric key used or AES encryption/decryption. Needs IV as well
+	SymmetricKey []byte // 16 bytes (128 bits)
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Session <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */

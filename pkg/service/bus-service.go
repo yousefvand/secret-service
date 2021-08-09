@@ -9,15 +9,15 @@ import (
 
 var PropsService *prop.Properties
 
-// dbusServicecreates SecretService object and interface on dbus
+// dbusService creates SecretService objects and interfaces on dbus
 func dbusService(service *Service) {
 
 	////////////////////////////// Methods //////////////////////////////
 	/*
 		OpenSession ( IN String algorithm,
-		IN Variant input,
-		OUT Variant output,
-		OUT ObjectPath result);
+		              IN Variant input,
+		              OUT Variant output,
+		              OUT ObjectPath result);
 	*/
 	openSession := []introspect.Arg{
 		{
