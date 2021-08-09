@@ -1,6 +1,7 @@
 package client_test
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/yousefvand/secret-service/pkg/client"
@@ -27,6 +28,10 @@ func TestClient_SecretServiceOpenSession(t *testing.T) {
 		if len(ssClient.CliSession.Cookie) != 32 {
 			t.Errorf("Unexpected CLI cookie length. Expected 32, got '%d'",
 				len(ssClient.CliSession.Cookie))
+		}
+
+		if result := bytes.Compare(Service.CliSession.SymmetricKey, ssClient.CliSession.SymmetricKey); result != 0 {
+			t.Errorf("Symmetric keys are not equal!")
 		}
 
 	})
