@@ -64,6 +64,8 @@ type CliSession struct {
 	Parent *Client
 	// symmetric key used or AES encryption/decryption. Needs IV as well
 	SymmetricKey []byte // 16 bytes (128 bits)
+	// serialnumber
+	SerialNumber string
 	// cookie
 	Cookie string
 }

@@ -17,7 +17,7 @@ import (
 	OpenSession ( IN String algorithm,
 	              IN Variant input,
 	              OUT Variant output,
-	              OUT String cookie);
+	              OUT String serialnumber);
 */
 
 // OpenSession creates a session for encrypted or non-encrypted further communication
@@ -93,7 +93,7 @@ func (client *Client) SecretServiceOpenSession(algorithm EncryptionAlgorithm) er
 
 	}
 
-	client.CliSession.Cookie = result
+	client.CliSession.SerialNumber = result
 
 	return nil
 }

@@ -13,7 +13,7 @@ func dbusSecretService(secretservice *SecretService) {
 		OpenSession ( IN String algorithm,
 		              IN Variant input,
 		              OUT Variant output,
-		              OUT String cookie);
+		              OUT String serialnumber);
 	*/
 	openSession := []introspect.Arg{
 		{
@@ -32,8 +32,35 @@ func dbusSecretService(secretservice *SecretService) {
 			Direction: "out",
 		},
 		{
-			Name:      "result",
+			Name:      "serialnumber",
 			Type:      "s",
+			Direction: "out",
+		},
+	}
+
+	/*
+		Command ( IN String command,
+		          OUT String result);
+	*/
+	command := []introspect.Arg{
+		{
+			Name:      "cookie",
+			Type:      "s",
+			Direction: "in",
+		},
+		{
+			Name:      "command",
+			Type:      "v",
+			Direction: "in",
+		},
+		{
+			Name:      "params",
+			Type:      "av",
+			Direction: "in",
+		},
+		{
+			Name:      "result",
+			Type:      "av",
 			Direction: "out",
 		},
 	}
@@ -70,6 +97,10 @@ func dbusSecretService(secretservice *SecretService) {
 					{
 						Name: "OpenSession",
 						Args: openSession,
+					},
+					{
+						Name: "Command",
+						Args: command,
 					},
 				},
 				Signals: []introspect.Signal{

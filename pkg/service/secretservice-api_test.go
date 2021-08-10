@@ -15,7 +15,7 @@ func Test_SecretServiceOpenSession(t *testing.T) {
 		OpenSession ( IN String algorithm,
 		IN Variant input,
 		OUT Variant output,
-		OUT String cookie);
+		OUT String serialnumber);
 	*/
 
 	t.Run("dh-ietf1024-sha256-aes128-cbc-pkcs7 algorithm", func(t *testing.T) {
@@ -27,9 +27,9 @@ func Test_SecretServiceOpenSession(t *testing.T) {
 			t.Errorf("OpenSession failed. Error: %v", err)
 		}
 
-		if len(ssClient.CliSession.Cookie) != 64 {
-			t.Errorf("Unexpected CLI cookie length. Expected 32, got '%d'",
-				len(ssClient.CliSession.Cookie))
+		if len(ssClient.CliSession.SerialNumber) != 32 {
+			t.Errorf("Unexpected CLI serialnumber length. Expected 32, got '%d'",
+				len(ssClient.CliSession.SerialNumber))
 		}
 
 		if result := bytes.Compare(Service.CliSession.SymmetricKey, ssClient.CliSession.SymmetricKey); result != 0 {

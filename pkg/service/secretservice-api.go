@@ -25,7 +25,7 @@ import (
 	OpenSession ( IN String algorithm,
 	              IN Variant input,
 	              OUT Variant output,
-	              OUT String cookie);
+	              OUT String serialnumber);
 */
 
 // OpenSession opens a unique session for the caller application
@@ -34,7 +34,7 @@ func (secretservice *SecretService) OpenSession(algorithm string,
 	input dbus.Variant) (dbus.Variant, string, *dbus.Error) {
 
 	log.WithFields(log.Fields{
-		"interface": "org.freedesktop.Secret.Service",
+		"interface": "ir.remisa.SecretService",
 		"method":    "OpenSession",
 		"algorithm": algorithm,
 		"input":     input.Value(),
@@ -117,9 +117,9 @@ func (secretservice *SecretService) OpenSession(algorithm string,
 
 		log.Debug("Agreed on 'dh-ietf1024-sha256-aes128-cbc-pkcs7' algorithm")
 
-		cookie := UUID() + UUID()
+		serialnumber := UUID()
 
-		return dbus.MakeVariant(publicKey), cookie, nil // end of successful negotiation
+		return dbus.MakeVariant(publicKey), serialnumber, nil // end of successful negotiation
 
 	default: // algorithm is not 'plain' or 'dh-ietf1024-sha256-aes128-cbc-pkcs7'
 		log.Warnf("The '%s' algorithm suggested by client is not supported", algorithm)
@@ -127,3 +127,30 @@ func (secretservice *SecretService) OpenSession(algorithm string,
 
 	}
 }
+
+/* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OpenSession <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
+/* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Command >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+
+/*
+	Command ( IN String command,
+	          OUT String result);
+*/
+
+// Command receives a command from CLI and runs it on daemon side
+func (secretservice *SecretService) Command(
+	serialnumber string, command dbus.Variant, params []dbus.Variant) ([]dbus.Variant, *dbus.Error) {
+
+	log.WithFields(log.Fields{
+		"interface":    "ir.remisa.SecretService",
+		"method":       "Command",
+		"serialnumber": serialnumber,
+		"command":      command,
+		"params":       params,
+	}).Trace("Method called by client")
+
+	return nil, nil
+
+}
+
+/* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Command <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
