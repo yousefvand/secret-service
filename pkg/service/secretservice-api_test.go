@@ -27,7 +27,7 @@ func Test_SecretServiceOpenSession(t *testing.T) {
 			t.Errorf("OpenSession failed. Error: %v", err)
 		}
 
-		if len(ssClient.CliSession.Cookie) != 32 {
+		if len(ssClient.CliSession.Cookie) != 64 {
 			t.Errorf("Unexpected CLI cookie length. Expected 32, got '%d'",
 				len(ssClient.CliSession.Cookie))
 		}

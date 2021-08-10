@@ -117,7 +117,7 @@ func (secretservice *SecretService) OpenSession(algorithm string,
 
 		log.Debug("Agreed on 'dh-ietf1024-sha256-aes128-cbc-pkcs7' algorithm")
 
-		cookie := UUID()
+		cookie := UUID() + UUID()
 
 		return dbus.MakeVariant(publicKey), cookie, nil // end of successful negotiation
 
