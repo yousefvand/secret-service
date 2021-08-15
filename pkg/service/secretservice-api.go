@@ -22,29 +22,25 @@ import (
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OpenSession >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 
 /*
-	OpenSession ( IN String algorithm,
-	              IN Variant input,
-	              OUT Variant output,
-	              OUT String serialnumber);
+	CreateSession ( IN String algorithm,
+	                IN Variant input,
+	                OUT Variant output,
+	                OUT String serialnumber);
 */
 
 // OpenSession opens a unique session for the caller application
 // further communication encryption/decryption relies on the related session
-func (secretservice *SecretService) OpenSession(algorithm string,
+func (service *Service) CreateSession(algorithm string,
 	input dbus.Variant) (dbus.Variant, string, *dbus.Error) {
 
 	log.WithFields(log.Fields{
 		"interface": "ir.remisa.SecretService",
-		"method":    "OpenSession",
+		"method":    "CreateSession",
 		"algorithm": algorithm,
 		"input":     input.Value(),
 	}).Trace("Method called by client")
 
 	log.Debugf("Client suggested '%s' algorithm", algorithm)
-
-	// if OpenSession succeeds all related information are stored in a session
-	cliSession := NewCliSession(secretservice.Parent)
-	secretservice.Parent.CliSession = cliSession
 
 	switch strings.ToLower(algorithm) {
 
@@ -110,16 +106,17 @@ func (secretservice *SecretService) OpenSession(algorithm string,
 			return dbus.MakeVariant(""), "",
 				DbusErrorCallFailed("Symmetric Key generation failed. Error: " + err.Error())
 		}
-		cliSession.SymmetricKey = symmetricKey
 
-		log.Tracef("Symmetric key: %v", cliSession.SymmetricKey)
-		log.Tracef("Symmetric key length: %v", len(cliSession.SymmetricKey))
+		service.SecretService.Session.SymmetricKey = symmetricKey
+
+		log.Tracef("Symmetric key: %v", symmetricKey)
+		log.Tracef("Symmetric key length: %v", len(symmetricKey))
 
 		log.Debug("Agreed on 'dh-ietf1024-sha256-aes128-cbc-pkcs7' algorithm")
 
-		serialnumber := UUID()
+		service.SecretService.Session.SerialNumber = UUID()
 
-		return dbus.MakeVariant(publicKey), serialnumber, nil // end of successful negotiation
+		return dbus.MakeVariant(publicKey), service.SecretService.Session.SerialNumber, nil // end of successful negotiation
 
 	default: // algorithm is not 'plain' or 'dh-ietf1024-sha256-aes128-cbc-pkcs7'
 		log.Warnf("The '%s' algorithm suggested by client is not supported", algorithm)
@@ -138,18 +135,27 @@ func (secretservice *SecretService) OpenSession(algorithm string,
 */
 
 // Command receives a command from CLI and runs it on daemon side
-func (secretservice *SecretService) Command(
-	serialnumber string, command dbus.Variant, params []dbus.Variant) ([]dbus.Variant, *dbus.Error) {
+func (service *Service) Command(
+	serialnumber string,
+	cookie []byte, cookie_iv []byte,
+	command []byte, command_iv []byte,
+	params []byte, params_iv []byte) ([]byte, []byte, *dbus.Error) {
 
 	log.WithFields(log.Fields{
 		"interface":    "ir.remisa.SecretService",
 		"method":       "Command",
 		"serialnumber": serialnumber,
+		"cookie":       cookie,
+		"cookie_iv":    cookie_iv,
 		"command":      command,
+		"command_iv":   command_iv,
 		"params":       params,
+		"params_iv":    params_iv,
 	}).Trace("Method called by client")
 
-	return nil, nil
+	// TODO: Implement
+
+	return nil, nil, nil
 
 }
 

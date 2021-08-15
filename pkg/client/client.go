@@ -21,6 +21,9 @@ func New() (*Client, error) {
 	client.SessionsMutex = new(sync.RWMutex)
 	client.CollectionsMutex = new(sync.RWMutex)
 	client.Sessions = make(map[string]*Session)
+	client.SecretService = &SecretService{}
+	client.SecretService.Session = &SecretServiceCLiSession{}
+	client.SecretService.Parent = client
 	client.Collections = make(map[string]*Collection)
 
 	connection, err := dbus.SessionBus()

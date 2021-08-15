@@ -10,8 +10,11 @@ func (client *Client) SecretServiceCommand(
 	serialnumber string, command string, params []string) (string, error) {
 
 	// client should already has obtained a CLI serialnumber
-	if client.CliSession == nil || client.CliSession.SerialNumber == "" {
+	if client.SecretService.Session.SerialNumber == "" {
 		panic("Client doesn't have a CLI serialnumber")
+	}
+	if client.SecretService.Session.Cookie == "" {
+		panic("Client doesn't have a valid CLI cookie")
 	}
 
 	// use symmetric key to encrypt command and params and call dbus method

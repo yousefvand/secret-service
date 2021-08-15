@@ -14,16 +14,15 @@ import (
 )
 
 /*
-	OpenSession ( IN String algorithm,
-	              IN Variant input,
-	              OUT Variant output,
-	              OUT String serialnumber);
+	CreateSession ( IN String algorithm,
+	                IN Variant input,
+	                OUT Variant output,
+	                OUT String serialnumber);
 */
 
 // OpenSession creates a session for encrypted or non-encrypted further communication
-func (client *Client) SecretServiceOpenSession(algorithm EncryptionAlgorithm) error {
+func (client *Client) SecretServiceCreateSession(algorithm EncryptionAlgorithm) error {
 
-	client.CliSession = NewCliSession(client)
 	var algorithmInUse string
 	var input dbus.Variant
 
@@ -37,7 +36,6 @@ func (client *Client) SecretServiceOpenSession(algorithm EncryptionAlgorithm) er
 		return errors.New("Diffie–Hellman private key generation failed. Error: " + errPrivateKey.Error())
 	}
 
-	// Dh_ietf1024_sha256_aes128_cbc_pkcs7:
 	algorithmInUse = "dh-ietf1024-sha256-aes128-cbc-pkcs7"
 	input = dbus.MakeVariant(privateKey.Bytes()) // own public key
 
@@ -45,7 +43,7 @@ func (client *Client) SecretServiceOpenSession(algorithm EncryptionAlgorithm) er
 	var err error
 
 	call, err = client.Call("org.freedesktop.secrets", "/secretservice",
-		"ir.remisa.SecretService", "OpenSession", algorithmInUse, input)
+		"ir.remisa.SecretService", "CreateSession", algorithmInUse, input)
 
 	if err != nil {
 		return errors.New("dbus call failed. Error: " + err.Error())
@@ -62,6 +60,8 @@ func (client *Client) SecretServiceOpenSession(algorithm EncryptionAlgorithm) er
 			return errors.New("type conversion failed in 'OpenSession'. Error: " + err.Error())
 		}
 	}
+
+	client.SecretService.Session.SerialNumber = result
 
 	if algorithm == Dh_ietf1024_sha256_aes128_cbc_pkcs7 {
 		var servicePublicKey []byte
@@ -89,11 +89,8 @@ func (client *Client) SecretServiceOpenSession(algorithm EncryptionAlgorithm) er
 		if err != nil {
 			return errors.New("Symmetric Key generation failed. Error: " + err.Error())
 		}
-		client.CliSession.SymmetricKey = symmetricKey
+		client.SecretService.Session.SymmetricKey = symmetricKey
 
 	}
-
-	client.CliSession.SerialNumber = result
-
 	return nil
 }

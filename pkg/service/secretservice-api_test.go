@@ -9,30 +9,30 @@ import (
 
 ////////////////////////////// OpenSession //////////////////////////////
 
-func Test_SecretServiceOpenSession(t *testing.T) {
+func Test_SecretServiceCreateSession(t *testing.T) {
 
 	/*
-		OpenSession ( IN String algorithm,
-		IN Variant input,
-		OUT Variant output,
-		OUT String serialnumber);
+		CreateSession ( IN String algorithm,
+		                IN Variant input,
+		                OUT Variant output,
+		                OUT String serialnumber);
 	*/
 
 	t.Run("dh-ietf1024-sha256-aes128-cbc-pkcs7 algorithm", func(t *testing.T) {
 
 		ssClient, _ := client.New()
-		err := ssClient.SecretServiceOpenSession(client.Dh_ietf1024_sha256_aes128_cbc_pkcs7)
+		err := ssClient.SecretServiceCreateSession(client.Dh_ietf1024_sha256_aes128_cbc_pkcs7)
 
 		if err != nil {
-			t.Errorf("OpenSession failed. Error: %v", err)
+			t.Errorf("CreateSession failed. Error: %v", err)
 		}
 
-		if len(ssClient.CliSession.SerialNumber) != 32 {
+		if len(ssClient.SecretService.Session.SerialNumber) != 32 {
 			t.Errorf("Unexpected CLI serialnumber length. Expected 32, got '%d'",
-				len(ssClient.CliSession.SerialNumber))
+				len(ssClient.SecretService.Session.SerialNumber))
 		}
 
-		if result := bytes.Compare(Service.CliSession.SymmetricKey, ssClient.CliSession.SymmetricKey); result != 0 {
+		if result := bytes.Compare(Service.SecretService.Session.SymmetricKey, ssClient.SecretService.Session.SymmetricKey); result != 0 {
 			t.Errorf("Symmetric keys are not equal!")
 		}
 

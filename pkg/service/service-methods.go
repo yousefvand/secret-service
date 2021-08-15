@@ -24,6 +24,11 @@ func New() *Service {
 	service.Collections = make(map[string]*Collection)
 	service.ServiceReadyChan = make(chan struct{})
 	service.ServiceShutdownChan = make(chan struct{})
+	service.SecretService = &SecretService{}
+	service.SecretService.Session = &SecretServiceCLiSession{}
+	service.SecretService.Parent = service
+	// service.SecretService.Session = &SecretServiceCLiSession{}
+
 	// service.Update callback is set by the user (App)
 	// Service.SaveData = func() {
 	// 	Service.SaveSignalChan <- struct{}{}
@@ -70,7 +75,7 @@ func (service *Service) Start(ctx context.Context) {
 	/* create deafult collection at: '/org/freedesktop/secrets/aliases/default' */
 	epoch := Epoch()
 	DefaultCollection(service, false, epoch, epoch)
-	dbusSecretService(NewSecretService(service)) // TODO: temp
+	dbusSecretService(service) // TODO: temp
 	// create SecretService interface on dbus path: '/org/freedesktop/secrets'
 	dbusService(service)
 

@@ -16,12 +16,14 @@ type Client struct {
 	DbusObject dbus.BusObject
 	// Signal channel
 	SignalChan chan *dbus.Signal
+	// SecretService session
+	SecretService *SecretService
 	// Mutex for lock/unlock Sessions map
 	SessionsMutex *sync.RWMutex
 	// sessions map. key: session dbus object path, value: session object
 	Sessions map[string]*Session
 	// Cli session
-	CliSession *CliSession
+	// CliSession *CliSession // TODO: REMOVE ME
 	// Mutex for lock/unlock Collections map
 	CollectionsMutex *sync.RWMutex
 	// Collections map. key: Collection dbus object path, value: Collection object
@@ -29,6 +31,28 @@ type Client struct {
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Client <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
+/* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SecretService >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+
+// CLI interface data structure
+type SecretService struct {
+	// reference to parent (service)
+	Parent *Client
+	// session (public key negotiation)
+	Session *SecretServiceCLiSession
+}
+
+// session (public key negotiation)
+type SecretServiceCLiSession struct {
+	//  session serial number
+	SerialNumber string
+	// symmetric key used or AES encryption/decryption. Needs IV as well
+	SymmetricKey []byte // 16 bytes (128 bits)
+	// session cookie
+	Cookie string
+}
+
+/* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SecretService <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Session >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 
