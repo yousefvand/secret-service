@@ -50,8 +50,8 @@ func (client *Client) SecretServiceCreateSession(algorithm EncryptionAlgorithm) 
 	}
 
 	var output dbus.Variant
-	var result string
-	err = call.Store(&output, &result)
+	var serialNumber string
+	err = call.Store(&output, &serialNumber)
 
 	if err != nil {
 		if algorithm == Unsupported {
@@ -61,7 +61,7 @@ func (client *Client) SecretServiceCreateSession(algorithm EncryptionAlgorithm) 
 		}
 	}
 
-	client.SecretService.Session.SerialNumber = result
+	client.SecretService.Session.SerialNumber = serialNumber
 
 	if algorithm == Dh_ietf1024_sha256_aes128_cbc_pkcs7 {
 		var servicePublicKey []byte

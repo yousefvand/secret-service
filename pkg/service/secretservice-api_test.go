@@ -7,7 +7,7 @@ import (
 	"github.com/yousefvand/secret-service/pkg/client"
 )
 
-////////////////////////////// OpenSession //////////////////////////////
+////////////////////////////// CreateSession //////////////////////////////
 
 func Test_SecretServiceCreateSession(t *testing.T) {
 
@@ -38,4 +38,24 @@ func Test_SecretServiceCreateSession(t *testing.T) {
 
 	})
 
+}
+
+////////////////////////////// SetPassword //////////////////////////////
+
+func Test_SecretServiceSetPassword(t *testing.T) {
+
+	/*
+		SetPassword ( IN  String      serialnumber
+			            IN  Array<Byte> oldpassword,
+									IN  Array<Byte> oldpassword_iv,
+									IN  Array<Byte> newpassword,
+									IN  Array<Byte> newpassword_iv,
+									IN  Array<Byte> salt,
+									IN  Array<Byte> salt_iv
+									OUT String result);
+	*/
+
+	t.Run("SetPassword", func(t *testing.T) {
+
+	})
 }
