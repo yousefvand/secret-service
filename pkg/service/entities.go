@@ -76,6 +76,13 @@ type SecretServiceCLiSession struct {
 	Cookie string
 }
 
+type PasswordFile struct {
+	// Password file version
+	Version string `yaml:"version"`
+	// Password hash: sha512(salt+password)
+	PasswordHash string `yaml:"passwordHash"`
+}
+
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SecretService <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Session >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */

@@ -4,11 +4,14 @@ package service
 
 import (
 	"context"
+	"io/ioutil"
+	"path/filepath"
 	"runtime"
 	"sync"
 
 	"github.com/godbus/dbus/v5"
 	log "github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 )
 
 // create and initialize a new instance of service
@@ -253,4 +256,58 @@ func (s *Service) UpdatePropertyCollections() {
 
 	PropsService.SetMust("org.freedesktop.Secret.Service",
 		"Collections", collections)
+}
+
+// ReadPasswordFile returns contents of 'password.yaml' file if exists otherwise empty string
+func (service *Service) ReadPasswordFile() string {
+
+	passwordFilePath := filepath.Join(service.Home, "password.yaml")
+	exist, err := fileOrFolderExists(passwordFilePath)
+
+	if err != nil {
+		log.Panicf("Cannot determine 'password.yaml' file status: %s", passwordFilePath)
+	}
+
+	if !exist {
+		return ""
+	}
+
+	data, err := ioutil.ReadFile(passwordFilePath)
+
+	if err != nil {
+		log.Warnf("Cannot open 'password.yaml' file at: %s.", passwordFilePath)
+	}
+
+	var passwordFile PasswordFile
+	err = yaml.Unmarshal(data, &passwordFile)
+
+	if err != nil {
+		log.Warnf("found malformed 'password.yaml' file: '%s'.", passwordFilePath)
+	}
+
+	if len(passwordFile.PasswordHash) < 1 {
+		return ""
+	}
+
+	return passwordFile.PasswordHash
+
+}
+
+// WritePasswordFile writes 'password.yaml' file or returns error
+func (service *Service) WritePasswordFile(version string, passwordHash string) error {
+
+	var content []byte = []byte(`# Password file version
+version: ` + version + `
+# Password hash: sha512(salt+password)
+passwordHash: '` + passwordHash + `'`)
+
+	passwordFile := filepath.Join(service.Home, "password.yaml")
+	errWritePasswordFile := ioutil.WriteFile(passwordFile, content, 0600)
+
+	if errWritePasswordFile != nil {
+		log.Warnf("Cannot write password file. Error: %v", errWritePasswordFile)
+		return errWritePasswordFile
+	}
+
+	return nil
 }
