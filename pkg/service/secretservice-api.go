@@ -195,9 +195,11 @@ func (service *Service) SetPassword(serialnumber string,
 		log.Panicf("Cannot decrypt new salt. Error: %v", err)
 	}
 
+	currentPasswordHash := service.ReadPasswordFile()
+
 	// set new password (requires previous empty password)
 	if len(string(oldPassword[:])) < 1 {
-		if len(service.ReadPasswordFile()) < 1 {
+		if len(currentPasswordHash) < 1 {
 			hasher := sha512.New()
 			hasher.Write(append(newSalt[:], newPassword[:]...))
 			hash := hex.EncodeToString(hasher.Sum(nil))
@@ -208,14 +210,15 @@ func (service *Service) SetPassword(serialnumber string,
 			}
 
 		} else {
-			return "password is not empty", nil
+			return "old password is not empty", nil
 		}
 	} else { // change old password
 		// check if password match
 		hasher := sha512.New()
 		hasher.Write(append(oldSalt[:], oldPassword[:]...))
 		hash := hex.EncodeToString(hasher.Sum(nil))
-		if service.ReadPasswordFile() != hash {
+		currentPasswordHash = service.ReadPasswordFile()
+		if currentPasswordHash != hash {
 			log.Warnf("Password mismatch from CLI client")
 			return "wrong old password", nil
 		}
