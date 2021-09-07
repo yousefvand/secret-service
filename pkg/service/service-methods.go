@@ -294,7 +294,9 @@ func (service *Service) ReadPasswordFile() string {
 }
 
 // WritePasswordFile writes 'password.yaml' file or returns error
-func (service *Service) WritePasswordFile(version string, passwordHash string) error {
+func (service *Service) WritePasswordFile(passwordHash string) error {
+
+	const version string = "0.1.0"
 
 	var content []byte = []byte(`# Password file version
 version: ` + version + `

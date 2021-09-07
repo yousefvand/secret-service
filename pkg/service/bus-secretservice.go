@@ -44,8 +44,10 @@ func dbusSecretService(service *Service) {
 									IN  Array<Byte> oldpassword_iv,
 									IN  Array<Byte> newpassword,
 									IN  Array<Byte> newpassword_iv,
-									IN  Array<Byte> salt,
-									IN  Array<Byte> salt_iv
+									IN  Array<Byte> oldSalt,
+									IN  Array<Byte> oldSalt_iv,
+									IN  Array<Byte> newSalt,
+									IN  Array<Byte> newSalt_iv
 									OUT String result);
 	*/
 	setPassword := []introspect.Arg{
@@ -75,12 +77,22 @@ func dbusSecretService(service *Service) {
 			Direction: "in",
 		},
 		{
-			Name:      "salt",
+			Name:      "oldsalt",
 			Type:      "ay",
 			Direction: "in",
 		},
 		{
-			Name:      "salt_iv",
+			Name:      "oldsalt_iv",
+			Type:      "ay",
+			Direction: "in",
+		},
+		{
+			Name:      "newsalt",
+			Type:      "ay",
+			Direction: "in",
+		},
+		{
+			Name:      "newsalt_iv",
 			Type:      "ay",
 			Direction: "in",
 		},

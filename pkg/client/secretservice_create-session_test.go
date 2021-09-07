@@ -25,6 +25,11 @@ func TestClient_SecretServiceCreateSession(t *testing.T) {
 			t.Errorf("CreateSession failed. Error: %v", err)
 		}
 
+		if len(Service.SecretService.Session.SerialNumber) != 32 {
+			t.Errorf("Unexpected CLI serialnumber length. Expected 32, got '%d'",
+				len(Service.SecretService.Session.SerialNumber))
+		}
+
 		if len(ssClient.SecretService.Session.SerialNumber) != 32 {
 			t.Errorf("Unexpected CLI serialnumber length. Expected 32, got '%d'",
 				len(ssClient.SecretService.Session.SerialNumber))

@@ -6,6 +6,8 @@ import (
 	"crypto/aes"
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/sha512"
+	"encoding/hex"
 	"io"
 	"strconv"
 	"strings"
@@ -126,6 +128,112 @@ func (service *Service) CreateSession(algorithm string,
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OpenSession <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
+/* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SetPassword >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+
+/*
+	SetPassword ( IN  String      serialnumber
+		            IN  Array<Byte> oldpassword,
+								IN  Array<Byte> oldpassword_iv,
+								IN  Array<Byte> newpassword,
+								IN  Array<Byte> newpassword_iv,
+								IN  Array<Byte> oldSalt,
+								IN  Array<Byte> oldSalt_iv,
+								IN  Array<Byte> newSalt,
+								IN  Array<Byte> newSalt_iv
+								OUT String result);
+*/
+
+// Set password for first time or change a password of service
+func (service *Service) SetPassword(serialnumber string,
+	oldPassword []byte, oldPassword_iv []byte,
+	newPassword []byte, newPassword_iv []byte,
+	oldSalt []byte, oldSalt_iv []byte,
+	newSalt []byte, newSalt_iv []byte) (string, *dbus.Error) {
+
+	log.WithFields(log.Fields{
+		"interface":      "ir.remisa.SecretService",
+		"method":         "SetPassword",
+		"serialnumber":   serialnumber,
+		"oldPassword":    oldPassword,
+		"oldPassword_iv": oldPassword_iv,
+		"newPassword":    newPassword,
+		"newPassword_iv": newPassword_iv,
+		"oldSalt":        oldSalt,
+		"oldSalt_iv":     oldSalt_iv,
+		"newSalt":        newSalt,
+		"newSalt_iv":     newSalt_iv,
+	}).Trace("Method called by client")
+
+	if service.SecretService.Session.SerialNumber != serialnumber {
+		log.Warnf("Session mismatch: Expected: %s, got: %s",
+			service.SecretService.Session.SerialNumber, serialnumber)
+		return "session mismatch", nil
+	}
+
+	oldPassword, err := AesCBCDecrypt(oldPassword_iv, oldPassword, service.SecretService.Session.SymmetricKey)
+
+	if err != nil {
+		log.Panicf("Cannot decrypt old password. Error: %v", err)
+	}
+
+	newPassword, err = AesCBCDecrypt(newPassword_iv, newPassword, service.SecretService.Session.SymmetricKey)
+
+	if err != nil {
+		log.Panicf("Cannot decrypt new password. Error: %v", err)
+	}
+
+	oldSalt, err = AesCBCDecrypt(oldSalt_iv, oldSalt, service.SecretService.Session.SymmetricKey)
+
+	if err != nil {
+		log.Panicf("Cannot decrypt old salt. Error: %v", err)
+	}
+
+	newSalt, err = AesCBCDecrypt(newSalt_iv, newSalt, service.SecretService.Session.SymmetricKey)
+
+	if err != nil {
+		log.Panicf("Cannot decrypt new salt. Error: %v", err)
+	}
+
+	// set new password (requires previous empty password)
+	if len(string(oldPassword[:])) < 1 {
+		if len(service.ReadPasswordFile()) < 1 {
+			hasher := sha512.New()
+			hasher.Write(append(newSalt[:], newPassword[:]...))
+			hash := hex.EncodeToString(hasher.Sum(nil))
+			err = service.WritePasswordFile(hash)
+
+			if err != nil {
+				log.Panicf("Cannot write password file. Error: %v", err)
+			}
+
+		} else {
+			return "password is not empty", nil
+		}
+	} else { // change old password
+		// check if password match
+		hasher := sha512.New()
+		hasher.Write(append(oldSalt[:], oldPassword[:]...))
+		hash := hex.EncodeToString(hasher.Sum(nil))
+		if service.ReadPasswordFile() != hash {
+			log.Warnf("Password mismatch from CLI client")
+			return "wrong old password", nil
+		}
+
+		// old password matches, change password file
+		hasher.Write(append(newSalt[:], newPassword[:]...))
+		hash = hex.EncodeToString(hasher.Sum(nil))
+		err := service.WritePasswordFile(hash)
+
+		if err != nil {
+			log.Panicf("Failed to write password file. Error: %v", err)
+		}
+	}
+
+	return "ok", nil
+}
+
+/* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SetPassword <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Command >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 

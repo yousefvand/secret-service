@@ -10,14 +10,14 @@ import (
 
 func Test_ReadPasswordFile(t *testing.T) {
 
-	t.Run("Read 'password.yaml' file - no file", func(t *testing.T) {
+	// t.Run("Read 'password.yaml' file - no file", func(t *testing.T) {
 
-		password := Service.ReadPasswordFile()
-		if password != "" {
-			t.Errorf("Expected no password, got: %s", password)
-		}
+	// 	password := Service.ReadPasswordFile()
+	// 	if password != "" {
+	// 		t.Errorf("Expected no password, got: %s", password)
+	// 	}
 
-	})
+	// })
 
 	t.Run("Read 'password.yaml' file - empty hash", func(t *testing.T) {
 
@@ -65,7 +65,7 @@ func Test_WritePasswordFile(t *testing.T) {
 		hasher.Write([]byte(secret))
 		hash := hex.EncodeToString(hasher.Sum(nil))
 
-		err := Service.WritePasswordFile("0.1.0", hash)
+		err := Service.WritePasswordFile(hash)
 
 		if err != nil {
 			t.Errorf("Cannot write password file. Error: %v", err)
