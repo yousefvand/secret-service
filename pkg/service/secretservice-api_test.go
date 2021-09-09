@@ -139,7 +139,7 @@ func Test_SecretServiceSetPassword(t *testing.T) {
 
 func Test_SecretServiceLogin(t *testing.T) {
 
-	t.Run("Login failure", func(t *testing.T) {
+	t.Run("Login", func(t *testing.T) {
 
 		ssClient, _ := client.New()
 		err := ssClient.SecretServiceCreateSession(client.Dh_ietf1024_sha256_aes128_cbc_pkcs7)
