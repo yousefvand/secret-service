@@ -105,8 +105,11 @@ func dbusSecretService(service *Service) {
 
 	/*
 		Login ( IN  String serialnumber,
-		        IN  String password
-						OUT String cookie);
+		        IN  Array<Byte> passwordhash,
+						IN  Array<Byte> passwordhash_iv,
+						OUT Array<Byte> cookie,
+						OUT Array<Byte> cookie_iv
+						OUT String result);
 	*/
 	login := []introspect.Arg{
 		{
@@ -132,6 +135,11 @@ func dbusSecretService(service *Service) {
 		{
 			Name:      "cookie_iv",
 			Type:      "ay",
+			Direction: "out",
+		},
+		{
+			Name:      "result",
+			Type:      "s",
 			Direction: "out",
 		},
 	}

@@ -11,6 +11,7 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"time"
 
 	"golang.org/x/crypto/hkdf"
 
@@ -237,6 +238,63 @@ func (service *Service) SetPassword(serialnumber string,
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SetPassword <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
+/* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Login >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+
+/*
+	Login ( IN  String serialnumber,
+	        IN  Array<Byte> passwordhash,
+					IN  Array<Byte> passwordhash_iv,
+					OUT Array<Byte> cookie,
+					OUT Array<Byte> cookie_iv
+					OUT String result);
+*/
+// Login to service and get a session cookie for further communications
+func (service *Service) Login(serialnumber string,
+	passwordhash []byte, passwordhash_iv []byte) ([]byte, []byte, string, *dbus.Error) {
+
+	log.WithFields(log.Fields{
+		"interface":       "ir.remisa.SecretService",
+		"method":          "Login",
+		"serialnumber":    serialnumber,
+		"passwordhash":    passwordhash,
+		"passwordhash_iv": passwordhash_iv,
+	}).Trace("Method called by client")
+
+	if service.SecretService.Session.SerialNumber != serialnumber {
+		log.Warnf("Session mismatch: Expected: %s, got: %s",
+			service.SecretService.Session.SerialNumber, serialnumber)
+		return nil, nil, "session mismatch", nil
+	}
+
+	pwdHash, err := AesCBCDecrypt(passwordhash_iv, passwordhash, service.SecretService.Session.SymmetricKey)
+
+	if err != nil {
+		log.Panicf("Failed to decrypt password hash. error: %v", err)
+	}
+
+	currentPasswordHash := service.ReadPasswordFile()
+
+	if string(pwdHash) != currentPasswordHash {
+		return nil, nil, "wrong password", nil
+	}
+
+	// issue cookie
+	service.SecretService.Session.Cookie.Value = UUID() + UUID()
+	service.SecretService.Session.Cookie.Issued = time.Now()
+	// FIXME: Cookie Duration
+
+	CookieIv, cookieCipher, err := AesCBCEncrypt([]byte(service.SecretService.Session.Cookie.Value),
+		service.SecretService.Session.SymmetricKey)
+
+	if err != nil {
+		log.Panicf("Failed to encrypt cookie. Error: %v", err)
+	}
+
+	return cookieCipher, CookieIv, "ok", nil
+}
+
+/* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Login <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Command >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 
