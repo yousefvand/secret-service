@@ -190,3 +190,63 @@ func Test_SecretServiceLogin(t *testing.T) {
 		}
 	})
 }
+
+////////////////////////////// Command //////////////////////////////
+
+func Test_SecretServiceCommand(t *testing.T) {
+
+	t.Run("Ping", func(t *testing.T) {
+
+		ssClient, _ := client.New()
+		err := ssClient.SecretServiceCreateSession(client.Dh_ietf1024_sha256_aes128_cbc_pkcs7)
+
+		if err != nil {
+			t.Errorf("CreateSession failed. Error: %v", err)
+		}
+
+		// write a password file
+		secret := "Alpha" + "Bravo"
+		hasher := sha512.New()
+		hasher.Write([]byte(secret))
+		hash := hex.EncodeToString(hasher.Sum(nil))
+
+		err = Service.WritePasswordFile(hash)
+
+		if err != nil {
+			t.Errorf("Cannot write password file. Error: %v", err)
+		}
+
+		// try login
+		iv, cipher, err := client.AesCBCEncrypt([]byte(hash),
+			ssClient.SecretService.Session.SymmetricKey)
+
+		if err != nil {
+			t.Errorf("Encryption failed. Error: %v", err)
+		}
+
+		encryptedCookie, cookie_iv, result, err := ssClient.SecretServiceLogin(
+			ssClient.SecretService.Session.SerialNumber, cipher, iv)
+
+		if err != nil {
+			t.Errorf("Login returned error: %v", err)
+		}
+
+		if result != "ok" {
+			t.Errorf("Expected 'ok' got: %v", result)
+		}
+
+		cookie, err := client.AesCBCDecrypt(cookie_iv, encryptedCookie, ssClient.SecretService.Session.SymmetricKey)
+
+		if err != nil {
+			t.Errorf("Decryption failed. Error: %v", err)
+		}
+
+		if len(cookie) != 64 {
+			t.Errorf("expected cookie of length 64, got: %d", len(cookie))
+		}
+
+		// Command
+		// ssClient.SecretServiceCommand(ssClient.SecretService.Session.SerialNumber)
+
+	})
+}

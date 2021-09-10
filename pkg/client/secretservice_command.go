@@ -1,23 +1,45 @@
 package client
 
+import (
+	"errors"
+
+	"github.com/godbus/dbus/v5"
+)
+
 /*
-	Command ( IN String command,
-	          OUT String result);
+	Command ( IN   String serialnumber,
+		        IN   Array<Byte> cookie,
+						IN   Array<Byte> cookie_iv,
+						IN   Array<Byte> command,
+						IN   Array<Byte> command_iv,
+						IN   Array<Byte> params,
+						IN   Array<Byte> params_iv,
+						OUT  Array<Byte> result,
+						OUT  Array<Byte> result_iv,);
 */
 
 // OpenSession creates a session for encrypted or non-encrypted further communication
 func (client *Client) SecretServiceCommand(
-	serialnumber string, command string, params []string) (string, error) {
+	serialnumber string, cookie []byte, cookie_iv []byte,
+	command []byte, command_iv []byte, params []byte, params_iv []byte) ([]byte, []byte, error) {
 
-	// client should already has obtained a CLI serialnumber
-	if client.SecretService.Session.SerialNumber == "" {
-		panic("Client doesn't have a CLI serialnumber")
+	var call *dbus.Call
+	var err error
+
+	call, err = client.Call("org.freedesktop.secrets", "/secretservice",
+		"ir.remisa.SecretService", "Command", serialnumber, cookie, cookie_iv,
+		command, command_iv, params, params_iv)
+
+	if err != nil {
+		return nil, nil, errors.New("dbus call failed. Error: " + err.Error())
 	}
-	if client.SecretService.Session.Cookie == "" {
-		panic("Client doesn't have a valid CLI cookie")
+
+	var result, result_iv []byte
+	err = call.Store(&result, &result_iv)
+
+	if err != nil {
+		return nil, nil, errors.New("type conversion failed in 'Command'. Error: " + err.Error())
 	}
 
-	// use symmetric key to encrypt command and params and call dbus method
-
-	return "", nil
+	return result, result_iv, nil
 }

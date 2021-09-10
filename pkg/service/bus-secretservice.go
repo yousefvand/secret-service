@@ -145,8 +145,15 @@ func dbusSecretService(service *Service) {
 	}
 
 	/*
-		Command ( IN String command,
-		          OUT String result);
+		Command ( IN   String serialnumber,
+			        IN   Array<Byte> cookie,
+							IN   Array<Byte> cookie_iv,
+							IN   Array<Byte> command,
+							IN   Array<Byte> command_iv,
+							IN   Array<Byte> params,
+							IN   Array<Byte> params_iv,
+							OUT  Array<Byte> result,
+							OUT  Array<Byte> result_iv,);
 	*/
 	command := []introspect.Arg{
 		{
