@@ -25,10 +25,6 @@ func TestClient_OpenSession(t *testing.T) {
 			t.Errorf("OpenSession failed. Error: %v", err)
 		}
 
-		if session != nil && session.PublicKey != nil {
-			t.Errorf("Unexpected public key. Expected null public key for plain algorithm")
-		}
-
 		// i.e. "/org/freedesktop/secrets/session/uuid..." uuid is 32 character
 		if session != nil && session.ObjectPath[:33] != "/org/freedesktop/secrets/session/" {
 			t.Errorf("invalid session path (should start with '/org/freedesktop/secrets/session/'): %s", session.ObjectPath)
@@ -84,14 +80,10 @@ func TestClient_OpenSession(t *testing.T) {
 	t.Run("Service OpenSession - unsupported algorithm", func(t *testing.T) {
 
 		ssClient, _ := client.New()
-		session, err := ssClient.OpenSession(client.Unsupported)
+		_, err := ssClient.OpenSession(client.Unsupported)
 
 		if err == nil {
 			t.Errorf("OpenSession unsupported algorithm raised no error. Error: %v", err)
-		}
-
-		if session != nil && session.PublicKey != nil {
-			t.Errorf("Unexpected public key. Expected null for unsupported algorithm")
 		}
 
 	})

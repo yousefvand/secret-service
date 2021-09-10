@@ -98,8 +98,10 @@ func (c *Collection) CreateItem(properties map[string]dbus.Variant,
 		"replace":         replace,
 	}).Trace("Method called by client")
 
-	if len(properties) == 0 { // FIXME: Is this allowed by API? Return an error
+	if len(properties) == 0 {
 		log.Warn("Client asked to create an item with empty 'properties' (no Label, no Attributes)")
+		// DOcumentation is silent about this situation so let it be allowed:
+		// return "", "/", ApiErrorNotSupported()
 	}
 	item := NewItem(c)
 	item.SetProperties(properties)

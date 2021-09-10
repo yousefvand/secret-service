@@ -4,10 +4,10 @@ package service
 
 import (
 	"sync"
+	"time"
 
 	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/prop"
-	"github.com/monnand/dhkx"
 )
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Service >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
@@ -31,8 +31,12 @@ type Service struct {
 	Home string
 	// encrypt database
 	EncryptDatabase bool
+	// SecretService session
+	SecretService *SecretService
 	// Mutex for lock/unlock Sessions map
 	SessionsMutex *sync.RWMutex
+	// Cli Session
+	CliSession *CliSession // TODO: REMOVE ME
 	// sessions map. key: session dbus object path, value: session object
 	Sessions map[string]*Session
 	// Mutex for lock/unlock Collections map
@@ -52,6 +56,41 @@ type Service struct {
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Service <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
+/* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SecretService >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+
+// CLI interface data structure
+type SecretService struct {
+	// reference to parent (service)
+	Parent *Service
+	// session (public key negotiation)
+	Session *SecretServiceCLiSession
+}
+
+// session (public key negotiation)
+type SecretServiceCLiSession struct {
+	//  session serial number
+	SerialNumber string
+	// symmetric key used or AES encryption/decryption. Needs IV as well
+	SymmetricKey []byte // 16 bytes (128 bits)
+	// session cookie
+	Cookie Cookie
+}
+
+type Cookie struct {
+	Value  string
+	Issued time.Time
+	time.Duration
+}
+
+type PasswordFile struct {
+	// Password file version
+	Version string `yaml:"version"`
+	// Password hash: sha512(salt+password)
+	PasswordHash string `yaml:"passwordHash"`
+}
+
+/* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SecretService <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Session >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 
@@ -74,20 +113,16 @@ type Session struct {
 	ObjectPath dbus.ObjectPath
 	// encryption algorithm type
 	EncryptionAlgorithm EncryptionAlgorithm
-	// Diffie Hellman Key-exchange filtered or unexported fields
-	Group *dhkx.DHGroup
-	// session own public key. 128 bytes (1024 bits)
-	PublicKey []byte
-	// session private key (cannot be used directly for encryption)
-	PrivateKey *dhkx.DHKey
-	// share key between service and client for encryption
-	// (cannot be used directly for encryption)
-	SharedKey []byte
 	// symmetric key used or AES encryption/decryption. Needs IV as well
 	SymmetricKey []byte // 16 bytes (128 bits)
-	// client public key used or AES encryption/decryption
-	ClientPublicKey []byte // 128 bytes (1024 bits)
 	// Sessions don't need to get persistent in db so no need for 'Update'
+}
+
+type CliSession struct {
+	// reference to parent (service)
+	Parent *Service
+	// symmetric key used or AES encryption/decryption. Needs IV as well
+	SymmetricKey []byte // 16 bytes (128 bits)
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Session <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */

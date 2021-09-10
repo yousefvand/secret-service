@@ -607,7 +607,38 @@ func Test_Item_Properties(t *testing.T) {
 				serviceItem.Modified, item.Modified)
 		}
 
-		// TODO: Other scenarios i.e. changing other properties
+		itemEpochBefore, err = item.PropertyModified()
+
+		if err != nil {
+			t.Error(err)
+		}
+
+		time.Sleep(time.Second * 2)
+
+		// Change item
+		err = item.SetProperty("Attributes", dbus.MakeVariant(map[string]string{
+			"a": "b",
+			"y": "z",
+		}))
+
+		if err != nil {
+			t.Error(err)
+		}
+
+		itemEpochAfter, err = item.PropertyModified()
+
+		if err != nil {
+			t.Error(err)
+		}
+
+		if (itemEpochAfter - itemEpochBefore) < 2 {
+			t.Errorf("item 'Modified' property has not changes after set 'Attributes'")
+		}
+
+		if serviceItem != nil && serviceItem.Modified != item.Modified {
+			t.Errorf("Service Modified time: %d, Client Modified time: %d. Out of sync!",
+				serviceItem.Modified, item.Modified)
+		}
 
 	})
 

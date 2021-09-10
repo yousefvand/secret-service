@@ -46,12 +46,6 @@ func (service *Service) OpenSession(algorithm string,
 		"input":     input.Value(),
 	}).Trace("Method called by client")
 
-	// TODO: Remove
-	// if service.Locked {
-	// 	log.Warn("Cannot 'OpenSession' when service is locked.")
-	// 	return dbus.MakeVariant(""), dbus.ObjectPath("/"), ApiErrorIsLocked()
-	// }
-
 	log.Debugf("Client suggested '%s' algorithm", algorithm)
 
 	// if OpenSession succeeds all related information are stored in a session
@@ -95,25 +89,16 @@ func (service *Service) OpenSession(algorithm string,
 			return dbus.MakeVariant(""), dbus.ObjectPath("/"),
 				DbusErrorCallFailed("Diffie–Hellman group creation failed. Error: " + err.Error())
 		}
-		session.Group = group // TODO: Remove me (not needed)
+
 		privateKey, err := group.GeneratePrivateKey(rand.Reader)
 		if err != nil {
 			log.Panicf("Diffie–Hellman private key generation failed. Error: %s", err.Error())
 			return dbus.MakeVariant(""), dbus.ObjectPath("/"),
 				DbusErrorCallFailed("Diffie–Hellman private key generation failed. Error: " + err.Error())
 		}
-		session.PrivateKey = privateKey // // TODO: Remove me (not needed)
 
-		// TODO: big endian
-		/*
-			b := []byte{...}
-			for i := 0; i < len(b)/2; i++ {
-			    b[i], b[len(b)-i-1] = b[len(b)-i-1], b[i]
-			}
-		*/
-		session.PublicKey = privateKey.Bytes() // TODO: Remove me (not needed)
+		publicKey := privateKey.Bytes()
 
-		// TODO: Check convertion validity
 		var clientPublicKey []byte
 		err = dbus.Store([]interface{}{input.Value()}, &clientPublicKey)
 		if err != nil {
@@ -133,22 +118,19 @@ func (service *Service) OpenSession(algorithm string,
 					strconv.Itoa(len(clientPublicKey)) + " bytes")
 		}
 
-		// TODO: Remove me (not needed)
-		session.ClientPublicKey = clientPublicKey // dhkx.NewPublicKey(clientPublicKey)
-
-		sharedKey, err := group.ComputeKey(dhkx.NewPublicKey(clientPublicKey), session.PrivateKey)
+		sharedKey, err := group.ComputeKey(dhkx.NewPublicKey(clientPublicKey), privateKey)
 		if err != nil {
 			log.Panicf("Diffie–Hellman shared key generation failed. Error: %s", err.Error())
 			return dbus.MakeVariant(""), dbus.ObjectPath("/"),
 				DbusErrorCallFailed("Diffie–Hellman shared key generation failed. Error: " + err.Error())
 		}
-		// TODO: Remove me (not needed)
-		session.SharedKey = sharedKey.Bytes()
 
-		log.Tracef("Shared key: %v", session.SharedKey)
-		log.Tracef("Shared key length: %v", len(session.SharedKey))
+		sessionSharedKey := sharedKey.Bytes()
 
-		hkdf := hkdf.New(sha256.New, session.SharedKey, nil, nil)
+		log.Tracef("Shared key: %v", sessionSharedKey)
+		log.Tracef("Shared key length: %v", len(sessionSharedKey))
+
+		hkdf := hkdf.New(sha256.New, sessionSharedKey, nil, nil)
 		symmetricKey := make([]byte, aes.BlockSize) // 16 * 8 = 128 bit
 		n, err := io.ReadFull(hkdf, symmetricKey)
 		if n != aes.BlockSize {
@@ -173,8 +155,7 @@ func (service *Service) OpenSession(algorithm string,
 
 		service.AddSession(session)
 
-		// TODO: make sure it is big endian
-		return dbus.MakeVariant(session.PublicKey), dbus.ObjectPath(path), nil // end of successful negotiation
+		return dbus.MakeVariant(publicKey), dbus.ObjectPath(path), nil // end of successful negotiation
 
 	default: // algorithm is not 'plain' or 'dh-ietf1024-sha256-aes128-cbc-pkcs7'
 		log.Warnf("The '%s' algorithm suggested by client is not supported", algorithm)
@@ -205,7 +186,7 @@ func (service *Service) CreateCollection(properties map[string]dbus.Variant,
 		"alias":      alias,
 	}).Trace("Method called by client")
 
-	if len(properties) == 0 { // FIXME: return error
+	if len(properties) == 0 {
 		log.Warn("Client asked to create a collection with empty 'properties'")
 	}
 
@@ -235,7 +216,7 @@ func (service *Service) CreateCollection(properties map[string]dbus.Variant,
 
 		epoch := Epoch()
 		service.AddCollection(collection, false, epoch, epoch, true)
-		collection.SignalCollectionCreated() // TODO: if it is default collection -> no signal
+		collection.SignalCollectionCreated()
 
 		if collection.Alias == "" {
 			log.Infof("New collection with no alias at: %v", collection.ObjectPath)
@@ -282,8 +263,8 @@ func (service *Service) SearchItems(
 
 	for _, collection := range service.Collections {
 		for _, item := range collection.Items {
-			// FIXME: Singe or Full match (FullMatch works with skype)
-			if IsMapSubsetFullMatch(item.LookupAttributes, // FIXME SingleMatch or FullMatch
+			// Single or Full match? FullMatch works
+			if IsMapSubsetFullMatch(item.LookupAttributes,
 				attributes, collection.ItemsMutex) {
 
 				log.Debugf("SearchItems found match. Label: %s, Path: %s", item.Label, item.ObjectPath)
@@ -383,7 +364,14 @@ func (service *Service) Lock(
 			if collection.ObjectPath == object {
 				if !collection.Locked {
 					collection.Lock()
-					// FIXME: EMit signal 'SignalCollectionChanged' and update modified time?
+
+					collection.DataMutex.Lock()
+					collection.Modified = Epoch()
+					collection.DbusProperties.SetMust("org.freedesktop.Secret.Collection",
+						"Modified", collection.Modified)
+					collection.DataMutex.Unlock()
+					collection.SignalCollectionChanged()
+
 					lockedObjects = append(lockedObjects, collection.ObjectPath)
 				}
 			}
@@ -391,7 +379,14 @@ func (service *Service) Lock(
 				if item.ObjectPath == object {
 					if !item.Locked {
 						item.Lock()
-						// FIXME: EMit signal 'SignalItemChanged' and update modified time?
+
+						item.DataMutex.Lock()
+						item.Modified = Epoch()
+						item.DbusProperties.SetMust("org.freedesktop.Secret.Item",
+							"Modified", item.Modified)
+						item.DataMutex.Unlock()
+						item.SignalItemChanged()
+
 						lockedObjects = append(lockedObjects, item.ObjectPath)
 					}
 				}
@@ -452,11 +447,6 @@ func (service *Service) GetSecrets(items []dbus.ObjectPath,
 					secretApi.Value = cipherData
 					result[itemPath] = secretApi
 
-					log.WithFields(log.Fields{ // TODO: Remove me.
-						"item plain secret":   item.Secret.PlainSecret,
-						"item secretApi":      item.Secret.SecretApi,
-						"generated secretApi": secretApi,
-					}).Debug("FIXME: Are they the same?")
 				}
 			}
 		}

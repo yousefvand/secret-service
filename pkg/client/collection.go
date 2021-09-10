@@ -3,6 +3,7 @@ package client
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -231,6 +232,21 @@ func (collection *Collection) PropertyGetItems() ([]string, error) {
 			variant.Value())
 	}
 
+	sort.Strings(items)
+
+	var collectionItems []string
+	for k := range collection.Items {
+		collectionItems = append(collectionItems, k)
+	}
+
+	sort.Strings(collectionItems)
+
+	// WON'T FIX: This is OK. Not all collection items on dbus created by a single client
+	// if !reflect.DeepEqual(collectionItems, items) {
+	// 	panic(fmt.Sprintf("Collection 'Items' property is out of sync. Object: %v, dbus: %v",
+	// 		collectionItems, items))
+	// }
+
 	return items, nil
 }
 
@@ -250,6 +266,11 @@ func (collection *Collection) PropertyGetLocked() (bool, error) {
 			variant.Value())
 	}
 
+	if collection.Locked != locked {
+		panic(fmt.Sprintf("collection 'Locked' property is out of sync. Object: %v, dbus: %v",
+			collection.Locked, locked))
+	}
+
 	return locked, nil
 }
 
@@ -266,6 +287,11 @@ func (collection *Collection) PropertyGetLabel() (string, error) {
 
 	if !ok {
 		return "", fmt.Errorf("expected 'Label' to be of type 'string', got: '%T'", variant.Value())
+	}
+
+	if collection.Label != label {
+		panic(fmt.Sprintf("Collection 'Label' property is out of sync. Object: %v, dbus: %v",
+			collection.Label, label))
 	}
 
 	return label, nil

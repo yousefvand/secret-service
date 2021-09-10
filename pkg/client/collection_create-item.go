@@ -58,6 +58,8 @@ func (collection *Collection) CreateItem(properties map[string]dbus.Variant,
 		}
 	}
 	item.ObjectPath = itemPath
+	item.Created, _ = item.PropertyCreated()
+	item.Modified, _ = item.PropertyModified()
 	item.Secret.SecretApi = secretApi
 	err = collection.AddItem(item)
 

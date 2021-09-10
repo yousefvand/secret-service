@@ -371,9 +371,14 @@ func Test_Collection_Properties(t *testing.T) {
 	*/
 	t.Run("Collection Property - Modified", func(t *testing.T) {
 
+		rawProperties := map[string]dbus.Variant{
+			"org.freedesktop.Secret.Collection.Label":  dbus.MakeVariant("SomeCollection"),
+			"org.freedesktop.Secret.Collection.Label2": dbus.MakeVariant("Test2"),
+		}
+
 		ssClient, _ := client.New()
 
-		collection, _, _ := ssClient.CreateCollection(map[string]dbus.Variant{}, "")
+		collection, _, _ := ssClient.CreateCollection(rawProperties, "")
 
 		collectionEpochBefore, err := collection.PropertyModified()
 
@@ -395,7 +400,26 @@ func Test_Collection_Properties(t *testing.T) {
 			t.Errorf("collection 'Modified' property has not changes after set 'Label'")
 		}
 
-		// TODO: Other scenarios i.e. changing other properties
+		collectionEpochBefore, err = collection.PropertyModified()
+
+		if err != nil {
+			t.Error(err)
+		}
+
+		time.Sleep(time.Second * 2)
+
+		collection.PropertySetLabel("Modified-Test")
+		collection.SetProperty("Label2", "Modified-Test2")
+
+		collectionEpochAfter, err = collection.PropertyModified()
+
+		if err != nil {
+			t.Error(err)
+		}
+
+		if (collectionEpochAfter - collectionEpochBefore) < 2 {
+			t.Errorf("collection 'Modified' property has not changes after set 'Custom Property'")
+		}
 
 	})
 

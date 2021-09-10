@@ -10,6 +10,12 @@ func NewSession(parent *Service) *Session {
 	return session
 }
 
+func NewCliSession(parent *Service) *CliSession {
+	CliSession := &CliSession{}
+	CliSession.Parent = parent
+	return CliSession
+}
+
 // CreateMethodFromPath returns a.b.c.Foo when session path
 // is /a/b/c/xyz and passed method is 'Foo'
 func (s *Session) CreateMethodFromPath(method string) string {

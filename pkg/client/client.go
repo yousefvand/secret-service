@@ -21,6 +21,9 @@ func New() (*Client, error) {
 	client.SessionsMutex = new(sync.RWMutex)
 	client.CollectionsMutex = new(sync.RWMutex)
 	client.Sessions = make(map[string]*Session)
+	client.SecretService = &SecretService{}
+	client.SecretService.Session = &SecretServiceCLiSession{}
+	client.SecretService.Parent = client
 	client.Collections = make(map[string]*Collection)
 
 	connection, err := dbus.SessionBus()
@@ -84,8 +87,6 @@ func (client *Client) Call(destination string, dbusPath dbus.ObjectPath,
 	response := client.DbusObject.Call(dbusInterface+"."+methodName, 0, args...)
 	return response, nil
 }
-
-// TODO: write a WatchSignal method for each interface
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Session >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 
@@ -214,15 +215,28 @@ func (client *Client) PropertyGetCollections() ([]string, error) {
 		return nil, errors.New("Error getting property 'Collections': " + err.Error())
 	}
 
-	result, ok := variant.Value().([]string)
+	collections, ok := variant.Value().([]string)
 
 	if !ok {
 		return nil, fmt.Errorf("invalid 'Collections' property type. Expected '[]string', got '%T'", variant.Value())
 	}
 
-	sort.Strings(result)
+	sort.Strings(collections)
 
-	return result, nil
+	var clientCollections []string
+	for k := range client.Collections {
+		clientCollections = append(clientCollections, k)
+	}
+
+	sort.Strings(clientCollections)
+
+	// WON'T FIX: This is OK. Not all collections on dbus created by a single client
+	// if !reflect.DeepEqual(clientCollections, collections) {
+	// 	panic(fmt.Sprintf("Client 'Collections' property is out of sync. Object: %v, dbus: %v",
+	// 		clientCollections, collections))
+	// }
+
+	return collections, nil
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Properties <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */

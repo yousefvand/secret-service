@@ -9,6 +9,12 @@ func NewSession(parent *Client) *Session {
 	return session
 }
 
+func NewCliSession(parent *Client) *CliSession {
+	cliSession := &CliSession{}
+	cliSession.Parent = parent
+	return cliSession
+}
+
 // HasSession returns true if session exists otherwise false
 func (client *Client) HasSession(sessionPath dbus.ObjectPath) bool {
 	client.SessionsMutex.RLock()

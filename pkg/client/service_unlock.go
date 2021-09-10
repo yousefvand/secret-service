@@ -38,12 +38,14 @@ func (client *Client) Unlock(
 			if collection.Locked {
 				if collection.ObjectPath == objectPath {
 					collection.Unlock()
+					collection.Modified, _ = collection.PropertyModified()
 				}
 			}
 			for _, item := range collection.Items {
 				if item.Locked {
 					if item.ObjectPath == objectPath {
 						item.Unlock()
+						item.Modified, _ = item.PropertyModified()
 					}
 				}
 			}

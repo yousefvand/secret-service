@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/godbus/dbus/v5"
-	"github.com/monnand/dhkx"
 )
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Client >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
@@ -17,10 +16,14 @@ type Client struct {
 	DbusObject dbus.BusObject
 	// Signal channel
 	SignalChan chan *dbus.Signal
+	// SecretService session
+	SecretService *SecretService
 	// Mutex for lock/unlock Sessions map
 	SessionsMutex *sync.RWMutex
 	// sessions map. key: session dbus object path, value: session object
 	Sessions map[string]*Session
+	// Cli session
+	// CliSession *CliSession // TODO: REMOVE ME
 	// Mutex for lock/unlock Collections map
 	CollectionsMutex *sync.RWMutex
 	// Collections map. key: Collection dbus object path, value: Collection object
@@ -28,6 +31,28 @@ type Client struct {
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Client <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
+/* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SecretService >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+
+// CLI interface data structure
+type SecretService struct {
+	// reference to parent (service)
+	Parent *Client
+	// session (public key negotiation)
+	Session *SecretServiceCLiSession
+}
+
+// session (public key negotiation)
+type SecretServiceCLiSession struct {
+	//  session serial number
+	SerialNumber string
+	// symmetric key used or AES encryption/decryption. Needs IV as well
+	SymmetricKey []byte // 16 bytes (128 bits)
+	// session cookie
+	Cookie string
+}
+
+/* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SecretService <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Session >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 
@@ -52,19 +77,21 @@ type Session struct {
 	ObjectPath dbus.ObjectPath
 	// encryption algorithm type
 	EncryptionAlgorithm EncryptionAlgorithm
-	// Diffie Hellman Key-exchange filtered or unexported fields
-	Group *dhkx.DHGroup
-	// session own public key. 128 bytes (1024 bits)
-	PublicKey []byte
-	// session private key (cannot be used directly for encryption)
-	PrivateKey *dhkx.DHKey
-	// share key between client and service for encryption
-	// (cannot be used directly for encryption)
-	SharedKey []byte
 	// symmetric key used or AES encryption/decryption. Needs IV as well
 	SymmetricKey []byte // 16 bytes (128 bits)
 	// client public key used or AES encryption/decryption
 	ServicePublicKey []byte // 128 bytes (1024 bits)
+}
+
+type CliSession struct {
+	// reference to parent (client)
+	Parent *Client
+	// symmetric key used or AES encryption/decryption. Needs IV as well
+	SymmetricKey []byte // 16 bytes (128 bits)
+	// serialnumber
+	SerialNumber string
+	// cookie
+	Cookie string
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Session <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */

@@ -2,9 +2,9 @@ package client
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/godbus/dbus/v5"
 )
@@ -17,9 +17,7 @@ func NewItem(parent *Collection) *Item {
 	item.Secret = NewSecret(item)
 	item.LockMutex = new(sync.Mutex)
 	item.LookupAttributesMutex = new(sync.RWMutex)
-	item.Created = uint64(time.Now().Unix())
-	item.Modified = item.Created
-	// TODO: Update
+
 	return item
 }
 
@@ -51,8 +49,6 @@ func (item *Item) GetProperty(name string) (dbus.Variant, error) {
 		return dbus.MakeVariant(nil),
 			fmt.Errorf("error getting property '%s'. Error: %v", name, err)
 	}
-
-	// FIXME: DO we need to set client property?
 
 	return variant, nil
 }
@@ -115,6 +111,11 @@ func (item *Item) PropertyGetLocked() (bool, error) {
 			variant.Value())
 	}
 
+	if item.Locked != locked {
+		panic(fmt.Sprintf("Item 'Locked' property is out of sync. Object: %v, dbus: %v",
+			item.Locked, locked))
+	}
+
 	return locked, nil
 }
 
@@ -134,6 +135,11 @@ func (item *Item) PropertyGetAttributes() (map[string]string, error) {
 		return map[string]string{},
 			fmt.Errorf("expected 'Attributes' to be of type 'map[string]string', got: '%T'",
 				variant.Value())
+	}
+
+	if !reflect.DeepEqual(item.LookupAttributes, attributes) {
+		panic(fmt.Sprintf("Item 'Attributes' property is out of sync. Object: %v, dbus: %v",
+			item.LookupAttributes, attributes))
 	}
 
 	return attributes, nil
@@ -173,7 +179,13 @@ func (item *Item) PropertyGetLabel() (string, error) {
 	label, ok := variant.Value().(string)
 
 	if !ok {
-		return "", fmt.Errorf("expected 'Label' to be of type 'string', got: '%T'", variant.Value())
+		return "", fmt.Errorf("expected 'Label' to be of type 'string', got: '%T'",
+			variant.Value())
+	}
+
+	if item.Label != label {
+		panic(fmt.Sprintf("Item 'Label' property is out of sync. Object: %v, dbus: %v",
+			item.Label, label))
 	}
 
 	return label, nil

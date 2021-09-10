@@ -133,13 +133,19 @@ func introspectCollectionByPath(collection *Collection, locked bool, created uin
 					if p.Name == "Label" {
 						collection.DataMutex.Lock()
 						collection.Label = p.Value.(string)
-						collection.DataMutex.Unlock()
-						// FIXME: Change collection ObjectPath if possible
-						// if !collection.Parent.GetCollectionByPath("/org/freedesktop/secrets/collection" + Label) {
-						// 	collection.ObjectPath = "/org/freedesktop/secrets/collection/" + Label
+
+						// FIXME: Change collection ObjectPath if available
+						// if collection.Parent.GetCollectionByPath(
+						// 	dbus.ObjectPath("/org/freedesktop/secrets/collection/"+collection.Label),
+						// ) == nil {
+						// 	collection.ObjectPath = dbus.ObjectPath(
+						// 		"/org/freedesktop/secrets/collection/" + collection.Label)
 						// }
+						collection.DataMutex.Unlock()
 					}
+					collection.DataMutex.Lock()
 					collection.Properties[p.Name] = dbus.MakeVariant(p.Value)
+					collection.DataMutex.Unlock()
 					log.Infof("Property '%v' of collection '%v' changed to: %v",
 						p.Name, collection.ObjectPath, p.Value)
 

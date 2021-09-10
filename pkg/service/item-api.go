@@ -59,7 +59,6 @@ func (item *Item) GetSecret(session dbus.ObjectPath) (*SecretApi, *dbus.Error) {
 
 	if sessionInUse == nil {
 		log.Warn("Secret session is missing")
-		// TODO: Check if dbus get corrupted by returning dbus error
 		return nil, ApiErrorNoSession() // empty secretApi
 	}
 
@@ -106,7 +105,7 @@ func (item *Item) SetSecret(secretApi SecretApi) *dbus.Error {
 
 	if session == nil {
 		log.Warn("Secret session is missing")
-		return ApiErrorNoSession() // TODO: Check if dbus get corrupted by returning dbus error
+		return ApiErrorNoSession()
 	}
 
 	secret.SecretApi = &secretApi
@@ -126,7 +125,6 @@ func (item *Item) SetSecret(secretApi SecretApi) *dbus.Error {
 	item.DataMutex.Lock()
 	item.Secret = secret
 	item.DataMutex.Unlock()
-	// TODO: Update dbus?
 	item.SignalItemChanged()
 	item.Parent.UpdateModified()
 	log.Tracef("SetSecret received: %s", item.Secret.PlainSecret)

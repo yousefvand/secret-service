@@ -3,21 +3,22 @@ package service
 import (
 	"log"
 
+	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/introspect"
 	"github.com/godbus/dbus/v5/prop"
 )
 
 var PropsService *prop.Properties
 
-// dbusServicecreates SecretService object and interface on dbus
+// dbusService creates SecretService objects and interfaces on dbus
 func dbusService(service *Service) {
 
 	////////////////////////////// Methods //////////////////////////////
 	/*
 		OpenSession ( IN String algorithm,
-		IN Variant input,
-		OUT Variant output,
-		OUT ObjectPath result);
+		              IN Variant input,
+		              OUT Variant output,
+		              OUT ObjectPath result);
 	*/
 	openSession := []introspect.Arg{
 		{
@@ -238,7 +239,7 @@ func dbusService(service *Service) {
 	propsSpec := map[string]map[string]*prop.Prop{
 		"org.freedesktop.Secret.Service": {
 			"Collections": {
-				Value:    []string{"/org/freedesktop/secrets/aliases/default"},
+				Value:    []dbus.ObjectPath{"/org/freedesktop/secrets/aliases/default"},
 				Writable: false,
 				Emit:     prop.EmitTrue,
 			},

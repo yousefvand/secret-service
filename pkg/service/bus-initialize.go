@@ -20,11 +20,6 @@ func dbusInitialize(connection *dbus.Conn) {
 		},
 	}), "/", "org.freedesktop.DBus.Introspectable")
 
-	// TODO: Implement dbus interface for service
-	connection.Export(introspect.NewIntrospectable(&introspect.Node{
-		Name: "/secretservice",
-	}), "/secretservice", "org.freedesktop.DBus.Introspectable")
-
 	connection.Export(introspect.NewIntrospectable(&introspect.Node{
 		Name: "/org",
 		Children: []introspect.Node{

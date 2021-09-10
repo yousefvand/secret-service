@@ -41,7 +41,7 @@ func DefaultCollection(parent *Service, locked bool, created uint64, modified ui
 	path := "/org/freedesktop/secrets/aliases/default"
 	collection.ObjectPath = dbus.ObjectPath(path)
 	collection.Properties = map[string]dbus.Variant{
-		"Label": dbus.MakeVariant("default"), // TODO: or SecretService
+		"Label": dbus.MakeVariant("default"),
 	}
 
 	collection.Parent.AddCollection(collection, locked, created, modified, true)
