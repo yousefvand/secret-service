@@ -44,12 +44,8 @@ type SecretService struct {
 
 // session (public key negotiation)
 type SecretServiceCLiSession struct {
-	//  session serial number
-	SerialNumber string
 	// symmetric key used or AES encryption/decryption. Needs IV as well
 	SymmetricKey []byte // 16 bytes (128 bits)
-	// session cookie
-	Cookie string
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< SecretService <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
@@ -88,10 +84,6 @@ type CliSession struct {
 	Parent *Client
 	// symmetric key used or AES encryption/decryption. Needs IV as well
 	SymmetricKey []byte // 16 bytes (128 bits)
-	// serialnumber
-	SerialNumber string
-	// cookie
-	Cookie string
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Session <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */

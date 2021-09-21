@@ -4,7 +4,6 @@ package service
 
 import (
 	"sync"
-	"time"
 
 	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/prop"
@@ -69,18 +68,8 @@ type SecretService struct {
 
 // session (public key negotiation)
 type SecretServiceCLiSession struct {
-	//  session serial number
-	SerialNumber string
 	// symmetric key used or AES encryption/decryption. Needs IV as well
 	SymmetricKey []byte // 16 bytes (128 bits)
-	// session cookie
-	Cookie Cookie
-}
-
-type Cookie struct {
-	Value  string
-	Issued time.Time
-	time.Duration
 }
 
 type PasswordFile struct {
