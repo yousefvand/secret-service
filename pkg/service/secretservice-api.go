@@ -329,7 +329,42 @@ func (service *Service) Command(
 		"params_iv":    params_iv,
 	}).Trace("Method called by client")
 
-	// TODO: Implement
+	if service.SecretService.Session.SerialNumber != serialnumber {
+		log.Warnf("Session mismatch: Expected: %s, got: %s",
+			service.SecretService.Session.SerialNumber, serialnumber)
+		return nil, nil, nil
+	}
+
+	cookie, err := AesCBCDecrypt(cookie_iv, cookie, service.SecretService.Session.SymmetricKey)
+
+	if err != nil {
+		log.Panicf("Failed to decrypt cookie. error: %v", err)
+	}
+
+	if len(cookie) != 64 {
+		log.Panicf("Invalid cookie length. Expected 64, got %d", len(cookie))
+	}
+
+	command, err = AesCBCDecrypt(command_iv, command, service.SecretService.Session.SymmetricKey)
+
+	if err != nil {
+		log.Panicf("Failed to decrypt command. error: %v", err)
+	}
+
+	params, err = AesCBCDecrypt(params_iv, params, service.SecretService.Session.SymmetricKey)
+
+	if err != nil {
+		log.Panicf("Failed to decrypt params. error: %v", err)
+	}
+
+	switch string(command) {
+	case "foo":
+		log.Info("FOO", params)
+	case "bar":
+		log.Info("BAR", params)
+	default:
+		log.Info("command not fount")
+	}
 
 	return nil, nil, nil
 

@@ -237,6 +237,9 @@ func Test_SecretServiceCommand(t *testing.T) {
 
 		cookie, err := client.AesCBCDecrypt(cookie_iv, encryptedCookie, ssClient.SecretService.Session.SymmetricKey)
 
+		if string(cookie) != Service.SecretService.Session.Cookie.Value {
+			t.Errorf("Cookie mismatch. Error: %v", err)
+		}
 		if err != nil {
 			t.Errorf("Decryption failed. Error: %v", err)
 		}
