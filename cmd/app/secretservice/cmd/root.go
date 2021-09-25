@@ -23,19 +23,6 @@ will export an unencrypted version of secret-service database.
 - Remisa Yousefvand
 - Jürgen Hötzel
 - scrouthtv`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) {
-
-	// 	ssClient, _ := client.New()
-	// 	response, _ := ssClient.SecretServiceCommand("ping", "")
-
-	// 	if response == "pong" {
-	// 		fmt.Println("Service is up and responsive")
-	// 	} else {
-	// 		fmt.Println("Something is wrong with service")
-	// 	}
-	// },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.

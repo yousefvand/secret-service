@@ -15,7 +15,7 @@ var pingCmd = &cobra.Command{
 	Use:   "ping",
 	Short: "Ping secretserviced daemon",
 	Long:  `Send ping signal to secretserviced daemon and wait for pong response`,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 
 		ssClient, _ := client.New()
 		response, _ := ssClient.SecretServiceCommand("ping", "")
