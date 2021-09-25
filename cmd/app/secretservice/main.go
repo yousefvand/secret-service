@@ -1,14 +1,7 @@
-// Cli tool for controlling secretserviced daemon
 package main
 
-import (
-	"io"
-
-	log "github.com/sirupsen/logrus"
-)
+import "github.com/yousefvand/secret-service/cmd/app/secretservice/cmd"
 
 func main() {
-	// TODO: Control secretserviced by signals and dbus interface
-	log.SetOutput(io.Discard)
-	log.Print("Not Implemented!")
+	cmd.Execute()
 }
