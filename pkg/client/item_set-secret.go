@@ -2,6 +2,8 @@ package client
 
 import (
 	"errors"
+
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 /*
@@ -21,7 +23,7 @@ func (item *Item) SetSecret(secretApi *SecretApi) error {
 
 	item.Secret.SecretApi = secretApi
 	session := client.GetSessionByPath(secretApi.Session)
-	plainSecret, err := AesCBCDecrypt(secretApi.Parameters,
+	plainSecret, err := crypto.AesCBCDecrypt(secretApi.Parameters,
 		secretApi.Value, session.SymmetricKey)
 
 	if err != nil {

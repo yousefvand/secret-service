@@ -5,6 +5,7 @@ import (
 
 	"github.com/godbus/dbus/v5"
 	"github.com/yousefvand/secret-service/pkg/client"
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 /*
@@ -50,7 +51,7 @@ func TestClient_GetSecrets(t *testing.T) {
 			}),
 		}
 
-		iv1, cipherData1, err1 := client.AesCBCEncrypt([]byte("Victoria1"), session1.SymmetricKey)
+		iv1, cipherData1, err1 := crypto.AesCBCEncrypt([]byte("Victoria1"), session1.SymmetricKey)
 
 		if err1 != nil {
 			t.Errorf("encryption1 error: %v", err1)
@@ -98,7 +99,7 @@ func TestClient_GetSecrets(t *testing.T) {
 			}),
 		}
 
-		iv2, cipherData2, err2 := client.AesCBCEncrypt([]byte("Victoria2"), session2.SymmetricKey)
+		iv2, cipherData2, err2 := crypto.AesCBCEncrypt([]byte("Victoria2"), session2.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption2 error: %v", err2)
@@ -130,7 +131,7 @@ func TestClient_GetSecrets(t *testing.T) {
 			}),
 		}
 
-		iv3, cipherData3, err3 := client.AesCBCEncrypt([]byte("Victoria3"), session2.SymmetricKey)
+		iv3, cipherData3, err3 := crypto.AesCBCEncrypt([]byte("Victoria3"), session2.SymmetricKey)
 
 		if err3 != nil {
 			t.Errorf("encryption3 error: %v", err3)
@@ -178,7 +179,7 @@ func TestClient_GetSecrets(t *testing.T) {
 			}
 			iv := secretApi.Parameters
 			cipherData := secretApi.Value
-			plainData, err := client.AesCBCDecrypt(iv, cipherData, testSession.SymmetricKey)
+			plainData, err := crypto.AesCBCDecrypt(iv, cipherData, testSession.SymmetricKey)
 			if err != nil {
 				t.Errorf("Error decrypting data. Error: %v", err)
 			}
@@ -197,7 +198,7 @@ func TestClient_GetSecrets(t *testing.T) {
 			}
 			iv := secretApi.Parameters
 			cipherData := secretApi.Value
-			plainData, err := client.AesCBCDecrypt(iv, cipherData, testSession.SymmetricKey)
+			plainData, err := crypto.AesCBCDecrypt(iv, cipherData, testSession.SymmetricKey)
 			if err != nil {
 				t.Errorf("Error decrypting data. Error: %v", err)
 			}
@@ -216,7 +217,7 @@ func TestClient_GetSecrets(t *testing.T) {
 			}
 			iv := secretApi.Parameters
 			cipherData := secretApi.Value
-			plainData, err := client.AesCBCDecrypt(iv, cipherData, testSession.SymmetricKey)
+			plainData, err := crypto.AesCBCDecrypt(iv, cipherData, testSession.SymmetricKey)
 			if err != nil {
 				t.Errorf("Error decrypting data. Error: %v", err)
 			}

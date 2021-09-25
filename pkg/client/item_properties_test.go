@@ -7,6 +7,7 @@ import (
 
 	"github.com/godbus/dbus/v5"
 	"github.com/yousefvand/secret-service/pkg/client"
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 func Test_Item_Properties(t *testing.T) {
@@ -42,7 +43,7 @@ func Test_Item_Properties(t *testing.T) {
 			}),
 		}
 
-		iv1, cipherData1, err1 := client.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
+		iv1, cipherData1, err1 := crypto.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
 
 		if err1 != nil {
 			t.Errorf("encryption1 error: %v", err1)
@@ -84,7 +85,7 @@ func Test_Item_Properties(t *testing.T) {
 			}),
 		}
 
-		iv2, cipherData2, err2 := client.AesCBCEncrypt([]byte("Victoria2"), session.SymmetricKey)
+		iv2, cipherData2, err2 := crypto.AesCBCEncrypt([]byte("Victoria2"), session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption2 error: %v", err2)
@@ -199,7 +200,7 @@ func Test_Item_Properties(t *testing.T) {
 			}),
 		}
 
-		iv, cipherData, err := client.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
+		iv, cipherData, err := crypto.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption1 error: %v", err)
@@ -304,7 +305,7 @@ func Test_Item_Properties(t *testing.T) {
 			}),
 		}
 
-		iv, cipherData, err := client.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
+		iv, cipherData, err := crypto.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption1 error: %v", err)
@@ -416,7 +417,7 @@ func Test_Item_Properties(t *testing.T) {
 			}),
 		}
 
-		iv1, cipherData1, err1 := client.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
+		iv1, cipherData1, err1 := crypto.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
 
 		if err1 != nil {
 			t.Errorf("encryption1 error: %v", err1)
@@ -458,7 +459,7 @@ func Test_Item_Properties(t *testing.T) {
 			}),
 		}
 
-		iv2, cipherData2, err2 := client.AesCBCEncrypt([]byte("Victoria2"), session.SymmetricKey)
+		iv2, cipherData2, err2 := crypto.AesCBCEncrypt([]byte("Victoria2"), session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption2 error: %v", err2)
@@ -543,7 +544,7 @@ func Test_Item_Properties(t *testing.T) {
 			}),
 		}
 
-		iv, cipherData, err := client.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
+		iv, cipherData, err := crypto.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption1 error: %v", err)

@@ -5,6 +5,7 @@ import (
 
 	"github.com/godbus/dbus/v5"
 	"github.com/yousefvand/secret-service/pkg/client"
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 func Test_Collection_Signals(t *testing.T) {
@@ -42,7 +43,7 @@ func Test_Collection_Signals(t *testing.T) {
 			}),
 		}
 
-		iv, cipherData, err := client.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
+		iv, cipherData, err := crypto.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption1 error: %v", err)
@@ -118,7 +119,7 @@ func Test_Collection_Signals(t *testing.T) {
 			}),
 		}
 
-		iv, cipherData, err := client.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
+		iv, cipherData, err := crypto.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption1 error: %v", err)
@@ -211,7 +212,7 @@ func Test_Collection_Signals(t *testing.T) {
 			}),
 		}
 
-		iv, cipherData, err := client.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
+		iv, cipherData, err := crypto.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption1 error: %v", err)
@@ -254,7 +255,7 @@ func Test_Collection_Signals(t *testing.T) {
 
 		// Change the item
 
-		iv2, cipherData2, err := client.AesCBCEncrypt([]byte("Victoria2"), session.SymmetricKey)
+		iv2, cipherData2, err := crypto.AesCBCEncrypt([]byte("Victoria2"), session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption2 error: %v", err)

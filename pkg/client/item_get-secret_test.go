@@ -5,6 +5,7 @@ import (
 
 	"github.com/godbus/dbus/v5"
 	"github.com/yousefvand/secret-service/pkg/client"
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 func TestItem_GetSecret(t *testing.T) {
@@ -47,7 +48,7 @@ func TestItem_GetSecret(t *testing.T) {
 			}),
 		}
 
-		iv1, cipherData1, err1 := client.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
+		iv1, cipherData1, err1 := crypto.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
 
 		if err1 != nil {
 			t.Errorf("encryption1 error: %v", err1)
@@ -91,7 +92,7 @@ func TestItem_GetSecret(t *testing.T) {
 			t.Errorf("GetSecret failed. Error: %v", err)
 		}
 
-		plainCipher, err := client.AesCBCDecrypt(secretApi.Parameters, secretApi.Value, session.SymmetricKey)
+		plainCipher, err := crypto.AesCBCDecrypt(secretApi.Parameters, secretApi.Value, session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("Decryption failed. Error: %v", err)

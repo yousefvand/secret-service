@@ -5,6 +5,7 @@ package service
 import (
 	"github.com/godbus/dbus/v5"
 	log "github.com/sirupsen/logrus"
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 /////////////////////////////////// Methods ///////////////////////////////////
@@ -68,7 +69,7 @@ func (item *Item) GetSecret(session dbus.ObjectPath) (*SecretApi, *dbus.Error) {
 		secretApi.ContentType = "text/plain; charset=utf8"
 		secretApi.Parameters = []byte("")
 	} else { // dh-ietf1024-sha256-aes128-cbc-pkcs7
-		iv, cipherData, err := AesCBCEncrypt([]byte(item.Secret.PlainSecret),
+		iv, cipherData, err := crypto.AesCBCEncrypt([]byte(item.Secret.PlainSecret),
 			sessionInUse.SymmetricKey)
 		if err != nil {
 			log.Errorf("Cannot GetSecret due to encryption error. Error: %v", err)
@@ -114,7 +115,7 @@ func (item *Item) SetSecret(secretApi SecretApi) *dbus.Error {
 		secret.PlainSecret = string(secret.SecretApi.Value)
 	} else {
 		iv := secret.SecretApi.Parameters
-		plainSecret, err := AesCBCDecrypt(iv, secret.SecretApi.Value, session.SymmetricKey)
+		plainSecret, err := crypto.AesCBCDecrypt(iv, secret.SecretApi.Value, session.SymmetricKey)
 		if err != nil {
 			log.Errorf("Cannot SetSecret due to decryption error. Error: %v", err)
 			return DbusErrorCallFailed("Cannot SetSecret due to decryption error. Error: " + err.Error())

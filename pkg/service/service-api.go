@@ -16,6 +16,7 @@ import (
 	"github.com/godbus/dbus/v5"
 	"github.com/monnand/dhkx"
 	log "github.com/sirupsen/logrus"
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 /*
@@ -436,7 +437,7 @@ func (service *Service) GetSecrets(items []dbus.ObjectPath,
 					secretApi := SecretApi{}
 					secretApi.Session = sessionInUse.ObjectPath
 					secretApi.ContentType = item.Secret.SecretApi.ContentType
-					iv, cipherData, err := AesCBCEncrypt([]byte(item.Secret.PlainSecret),
+					iv, cipherData, err := crypto.AesCBCEncrypt([]byte(item.Secret.PlainSecret),
 						[]byte(sessionInUse.SymmetricKey))
 					if err != nil {
 						log.Errorf("Cannot GetSecrets due to encryption error. Error: %v", err)

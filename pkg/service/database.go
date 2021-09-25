@@ -10,6 +10,7 @@ import (
 
 	"github.com/godbus/dbus/v5"
 	log "github.com/sirupsen/logrus"
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Entities >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
@@ -155,7 +156,7 @@ func RestoreData(service *Service) { // TODO: (serviceHome, DbLoadedChan)
 			item.Secret.SecretApi.ContentType = "text/plain"
 
 			if encrypted {
-				decrypted, err := DecryptAESCBC256(masterPassword, ItemValue.Secret.SecretText)
+				decrypted, err := crypto.DecryptAESCBC256(masterPassword, ItemValue.Secret.SecretText)
 				if err != nil {
 					if os.Getenv("ENV") != "TEST" {
 						log.Panicf("Cannot decrypt database. Error: %v", err)
@@ -265,7 +266,7 @@ func Marshal(service *Service, dbFile string) {
 			secret.Parent = itemValue.ObjectPath
 
 			if encrypt {
-				encrypted, err := EncryptAESCBC256(masterPassword, itemValue.Secret.PlainSecret)
+				encrypted, err := crypto.EncryptAESCBC256(masterPassword, itemValue.Secret.PlainSecret)
 
 				if err != nil {
 					log.Panicf("Database encryption failed. Error: %v", err)
