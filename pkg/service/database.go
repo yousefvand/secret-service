@@ -85,7 +85,7 @@ type DbSecret struct {
 // RestoreData reads database and restores dbus objects
 func RestoreData(service *Service) { // TODO: (serviceHome, DbLoadedChan)
 
-	dbFile := filepath.Join(service.Home, "db.json")
+	dbFile := filepath.Join(service.Config.Home, "db.json")
 
 	db := Unmarshal(dbFile)
 
@@ -184,7 +184,7 @@ func RestoreData(service *Service) { // TODO: (serviceHome, DbLoadedChan)
 // PersistData makes dbus objects persistent to db as soon as they change
 func PersistData(ctx context.Context, service *Service) {
 
-	dbFile := filepath.Join(service.Home, "db.json")
+	dbFile := filepath.Join(service.Config.Home, "db.json")
 	dbLock := new(sync.Mutex)
 
 	for {
@@ -212,7 +212,7 @@ func PersistData(ctx context.Context, service *Service) {
 // Marshal converts dbus objects to JSON
 func Marshal(service *Service, dbFile string) {
 
-	encrypt := service.EncryptDatabase
+	encrypt := service.Config.EncryptDatabase
 	masterPassword := os.Getenv("MASTERPASSWORD")
 
 	if len(masterPassword) > 0 && len(masterPassword) != 32 {

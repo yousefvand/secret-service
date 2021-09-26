@@ -23,7 +23,7 @@ func SetupLogger(app *AppData) {
 	// No log file specified, use default:
 	// ~/.secret-service/secretserviced/logs/secretserviced.log
 	if app.Config.LogFile == "" {
-		app.Config.LogFile = filepath.Join(app.Service.Home, "logs", "secretserviced.log")
+		app.Config.LogFile = filepath.Join(app.Service.Config.Home, "logs", "secretserviced.log")
 	}
 
 	lumberjackLogger := &lumberjack.Logger{

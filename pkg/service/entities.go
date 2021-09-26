@@ -26,10 +26,7 @@ type Service struct {
 	// true if service is locked otherwise false
 	// Locked bool
 
-	// Service home path
-	Home string
-	// encrypt database
-	EncryptDatabase bool
+	Config *ServiceConfig
 	// SecretService session
 	SecretService *SecretService
 	// Mutex for lock/unlock Sessions map
@@ -52,6 +49,13 @@ type Service struct {
 	ServiceShutdownChan chan struct{}
 	// inform database has loaded
 	DbLoadedChan chan struct{}
+}
+
+type ServiceConfig struct {
+	// Service home path
+	Home string
+	// encrypt database
+	EncryptDatabase bool
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Service <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */

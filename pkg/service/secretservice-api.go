@@ -34,10 +34,10 @@ func (service *Service) Command(command string, params string) (string, *dbus.Er
 	case "ping":
 		return "pong", nil
 	case "export database":
-		dbFile := filepath.Join(service.Home, time.Now().Format("2006.01.02-15:04:05")+"-"+"db.json")
-		store := service.EncryptDatabase
-		service.EncryptDatabase = false
-		service.EncryptDatabase = store
+		dbFile := filepath.Join(service.Config.Home, time.Now().Format("2006.01.02-15:04:05")+"-"+"db.json")
+		store := service.Config.EncryptDatabase
+		service.Config.EncryptDatabase = false
+		service.Config.EncryptDatabase = store
 		Marshal(service, dbFile)
 		return "ok", nil
 	default:

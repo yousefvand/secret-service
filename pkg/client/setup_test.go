@@ -33,7 +33,7 @@ func TestMain(m *testing.M) {
 	log.SetOutput(lumberjackLogger)
 
 	Service = service.New()
-	Service.Home, _ = ioutil.TempDir("", "secret-service")
+	Service.Config.Home, _ = ioutil.TempDir("", "secret-service")
 	ctx, cancel := context.WithCancel(context.Background())
 	go Service.Start(ctx) // start secret service
 

@@ -75,7 +75,7 @@ func NewConfig() *Config {
 // load configurations from file
 func (config *Config) Load(app *AppData) {
 
-	serviceHome := app.Service.Home
+	serviceHome := app.Service.Config.Home
 	filePath := filepath.Join(serviceHome, "config.yaml")
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {

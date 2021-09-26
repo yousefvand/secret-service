@@ -22,7 +22,7 @@ func Test_ReadPasswordFile(t *testing.T) {
 	t.Run("Read 'password.yaml' file - empty hash", func(t *testing.T) {
 
 		// write empty hash
-		passwordFile := filepath.Join(Service.Home, "password.yaml")
+		passwordFile := filepath.Join(Service.Config.Home, "password.yaml")
 		errWritePasswordFile := ioutil.WriteFile(passwordFile, emptyPasswordFile, 0600)
 
 		if errWritePasswordFile != nil {
@@ -39,7 +39,7 @@ func Test_ReadPasswordFile(t *testing.T) {
 	t.Run("Read 'password.yaml' file - some hash", func(t *testing.T) {
 
 		// write some hash
-		passwordFile := filepath.Join(Service.Home, "password.yaml")
+		passwordFile := filepath.Join(Service.Config.Home, "password.yaml")
 		errWritePasswordFile := ioutil.WriteFile(passwordFile, fullPasswordFile, 0600)
 
 		if errWritePasswordFile != nil {
