@@ -61,6 +61,7 @@ func NewApp() *AppData {
 // Load configurations and setup logger
 func (app *AppData) Load() {
 	app.Config.Load(app)
+	app.Service.Config.AllowDbExport = app.Config.AllowDbExport
 	app.Service.Config.EncryptDatabase = app.Config.Encryption
 	app.SetupLogger()
 }

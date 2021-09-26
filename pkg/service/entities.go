@@ -56,6 +56,8 @@ type ServiceConfig struct {
 	Home string
 	// encrypt database
 	EncryptDatabase bool
+	// allow database to be exported without encryption
+	AllowDbExport bool
 }
 
 /* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Service <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */

@@ -43,6 +43,8 @@ type Config struct {
 	Encryption bool `yaml:"encryption"`
 	// Desktop notification icon
 	Icon string `yaml:"icon"`
+	// Allow database to be exported without encryption
+	AllowDbExport bool `yaml:"allowDbExport"`
 	// Prompting when necessary
 	Prompting bool `yaml:"prompting"`
 	// Absolute path to log file
@@ -191,6 +193,9 @@ encryption: true
 
 # A system icon as string i.e. "flag" used in notifications
 icon: 'view-private'
+
+# Allow database to be exported without encryption
+allowDbExport: true
 
 # Prompting when necessary
 prompting: false

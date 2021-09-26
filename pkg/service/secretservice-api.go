@@ -34,6 +34,9 @@ func (service *Service) Command(command string, params string) (string, *dbus.Er
 	case "ping":
 		return "pong", nil
 	case "export database":
+		if !service.Config.AllowDbExport {
+			return "verboten", nil
+		}
 		dbFile := filepath.Join(service.Config.Home, time.Now().Format("2006.01.02-15:04:05")+"-"+"db.json")
 		store := service.Config.EncryptDatabase
 		service.Config.EncryptDatabase = false
