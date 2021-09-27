@@ -1,10 +1,13 @@
 package cmd
 
 import (
-	"fmt"
+	"bufio"
+	"io/ioutil"
+	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/yousefvand/secret-service/pkg/client"
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 func init() {
@@ -24,15 +27,55 @@ var encryptCmd = &cobra.Command{
 		password, _ := cmd.Flags().GetString("password")
 		input, _ := cmd.Flags().GetString("input")
 		output, _ := cmd.Flags().GetString("output")
-		params := password + "\n" + input + "\n" + output
 
-		ssClient, _ := client.New()
-		response, _ := ssClient.SecretServiceCommand("encrypt database", params)
-
-		if response == "ok" {
-			fmt.Println("database encrypted successfully")
-		} else {
-			fmt.Println("database encryption failed!")
+		if len(password) != 32 {
+			panic("Wrong password length. Password should be exactly 32 characters.")
 		}
+
+		if exist, _ := fileOrFolderExists(input); !exist {
+			panic("Input file doesn't exist")
+		}
+
+		file, err := os.Open(input)
+
+		if err != nil {
+			panic("failed to open input file")
+		}
+		defer file.Close()
+
+		scanner := bufio.NewScanner(file)
+		scanner.Split(bufio.ScanLines)
+		var i int = 0
+		var signature bool = false
+		var encrypted []string
+
+		for scanner.Scan() {
+			i++
+			line := scanner.Text()
+			if line == " \"encrypted\": false," {
+				signature = true
+			}
+			if i > 2 && !signature {
+				panic("Wrong type of file. This file is not marked as non \"encrypted\"!")
+			}
+			if index := strings.Index(line, "secretText"); index > 0 {
+				text := line[21 : len(line)-1]
+				cipher, err := crypto.EncryptAESCBC256(password, text)
+				if err != nil {
+					panic("Encryption failed: " + err.Error())
+				}
+				newLine := line[:21] + cipher + "\""
+				encrypted = append(encrypted, newLine)
+			} else {
+				encrypted = append(encrypted, line)
+			}
+		}
+
+		fileContent := strings.Join(encrypted, "\n")
+		err = ioutil.WriteFile(output, []byte(fileContent), 0755)
+		if err != nil {
+			panic("Writing to output file failed: " + output)
+		}
+
 	},
 }

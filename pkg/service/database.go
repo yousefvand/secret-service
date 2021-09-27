@@ -83,7 +83,7 @@ type DbSecret struct {
 /* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> RestoreData >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
 
 // RestoreData reads database and restores dbus objects
-func RestoreData(service *Service) { // TODO: (serviceHome, DbLoadedChan)
+func RestoreData(service *Service) {
 
 	dbFile := filepath.Join(service.Config.Home, "db.json")
 
