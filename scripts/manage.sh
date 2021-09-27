@@ -8,11 +8,13 @@ Version=1.0.0
 
 function install () {
 
-  echo "Building binary..."
+  echo "Building binaries..."
   go build -race -o secretserviced cmd/app/secretserviced/main.go
-  echo "Copying binary to /usr/bin"
+  go build -race -o secretservice cmd/app/secretservice/main.go
+  echo "Copying binaries to /usr/bin"
   # Alternatively: ~/.local/bin
   sudo cp secretserviced /usr/bin
+  sudo cp secretservice /usr/bin
   echo "Creating systemd UNIT file at /etc/systemd/user"
   # Alternatively: ~/.config/systemd/user/
   rm secretserviced
@@ -63,8 +65,9 @@ function uninstall () {
   
   echo "disabling service..."
   systemctl disable --now --user secretserviced.service
-  echo "deleting binary"
+  echo "deleting binaries"
   sudo rm /usr/bin/secretserviced
+  sudo rm /usr/bin/secretservice
 
   if [ -f "/etc/systemd/user/secretserviced.service" ]; then
     read -rep "systemd UNIT file exist at '/etc/systemd/user/secretserviced.service'.
