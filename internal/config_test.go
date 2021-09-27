@@ -20,7 +20,7 @@ func Test_Config(t *testing.T) {
 	t.Run("LoadConfig", func(t *testing.T) {
 
 		app := NewApp()
-		app.Service.Home = tempDir(t)
+		app.Service.Config.Home = tempDir(t)
 		config.Load(app)
 
 		if config.Icon == "" || config.Version == "" {

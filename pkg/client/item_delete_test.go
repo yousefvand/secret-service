@@ -5,6 +5,7 @@ import (
 
 	"github.com/godbus/dbus/v5"
 	"github.com/yousefvand/secret-service/pkg/client"
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 func TestItem_Delete(t *testing.T) {
@@ -47,7 +48,7 @@ func TestItem_Delete(t *testing.T) {
 			}),
 		}
 
-		iv1, cipherData1, err1 := client.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
+		iv1, cipherData1, err1 := crypto.AesCBCEncrypt([]byte("Victoria1"), session.SymmetricKey)
 
 		if err1 != nil {
 			t.Errorf("encryption1 error: %v", err1)
@@ -94,7 +95,7 @@ func TestItem_Delete(t *testing.T) {
 			}),
 		}
 
-		iv2, cipherData2, err2 := client.AesCBCEncrypt([]byte("Victoria2"), session.SymmetricKey)
+		iv2, cipherData2, err2 := crypto.AesCBCEncrypt([]byte("Victoria2"), session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption2 error: %v", err2)
@@ -141,7 +142,7 @@ func TestItem_Delete(t *testing.T) {
 			}),
 		}
 
-		iv3, cipherData3, err3 := client.AesCBCEncrypt([]byte("Victoria3"), session.SymmetricKey)
+		iv3, cipherData3, err3 := crypto.AesCBCEncrypt([]byte("Victoria3"), session.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption3 error: %v", err3)

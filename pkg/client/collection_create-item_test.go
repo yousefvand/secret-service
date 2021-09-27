@@ -5,6 +5,7 @@ import (
 
 	"github.com/godbus/dbus/v5"
 	"github.com/yousefvand/secret-service/pkg/client"
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 /*
@@ -54,7 +55,7 @@ func TestCollection_CreateItem(t *testing.T) {
 			}),
 		}
 
-		iv1, cipherData1, err1 := client.AesCBCEncrypt([]byte("Victoria1"), session1.SymmetricKey)
+		iv1, cipherData1, err1 := crypto.AesCBCEncrypt([]byte("Victoria1"), session1.SymmetricKey)
 
 		if err1 != nil {
 			t.Errorf("encryption1 error: %v", err1)
@@ -123,7 +124,7 @@ func TestCollection_CreateItem(t *testing.T) {
 			}),
 		}
 
-		iv2, cipherData2, err2 := client.AesCBCEncrypt([]byte("Victoria2"), session2.SymmetricKey)
+		iv2, cipherData2, err2 := crypto.AesCBCEncrypt([]byte("Victoria2"), session2.SymmetricKey)
 
 		if err != nil {
 			t.Errorf("encryption2 error: %v", err2)

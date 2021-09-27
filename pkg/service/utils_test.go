@@ -6,6 +6,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/yousefvand/secret-service/pkg/crypto"
 	"github.com/yousefvand/secret-service/pkg/service"
 )
 
@@ -360,7 +361,7 @@ func TestPKCS7Padding(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := service.PKCS7Padding(tt.args.plainUnpaddedData, tt.args.blockSize)
+			got := crypto.PKCS7Padding(tt.args.plainUnpaddedData, tt.args.blockSize)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("PKCS7Padding() = %v, want %v", got, tt.want)
 			}
@@ -403,7 +404,7 @@ func TestPKCS7UnPadding(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := service.PKCS7UnPadding(tt.args.plainPaddedData); !reflect.DeepEqual(got, tt.want) {
+			if got := crypto.PKCS7UnPadding(tt.args.plainPaddedData); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("PKCS7UnPadding() = %v, want %v", got, tt.want)
 			}
 		})
@@ -415,13 +416,13 @@ func TestAesCBCEncrypt(t *testing.T) {
 	secret := []byte("Victoria")
 	key := []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}
 
-	iv, cipherData, err := service.AesCBCEncrypt(secret, key)
+	iv, cipherData, err := crypto.AesCBCEncrypt(secret, key)
 
 	if err != nil {
 		t.Errorf("Encryption failed. Error: %v", err)
 	}
 
-	data, err := service.AesCBCDecrypt(iv, cipherData, key)
+	data, err := crypto.AesCBCDecrypt(iv, cipherData, key)
 
 	if err != nil {
 		t.Errorf("Decryption failed. Error: %v", err)
@@ -462,13 +463,13 @@ func TestEncryptionAndDecryption(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cipher, err := service.EncryptAESCBC256(tt.args.key, tt.args.secret)
+			cipher, err := crypto.EncryptAESCBC256(tt.args.key, tt.args.secret)
 
 			if err != nil {
 				t.Errorf("Encryption failed. Error: %v", err)
 			}
 
-			got, err := service.DecryptAESCBC256(tt.args.key, cipher)
+			got, err := crypto.DecryptAESCBC256(tt.args.key, cipher)
 
 			if err != nil {
 				t.Errorf("Decryption failed. Error: %v", err)

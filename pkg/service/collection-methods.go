@@ -12,6 +12,7 @@ import (
 
 	"github.com/godbus/dbus/v5"
 	log "github.com/sirupsen/logrus"
+	"github.com/yousefvand/secret-service/pkg/crypto"
 )
 
 // NewCollection creates and initialize a new collection
@@ -81,7 +82,7 @@ func (collection *Collection) AddItem(item *Item, replace bool, saveData bool,
 			item.Secret.PlainSecret = string(item.Secret.SecretApi.Value)
 		} else {
 			iv := item.Secret.SecretApi.Parameters
-			secret, err := AesCBCDecrypt(iv, item.Secret.SecretApi.Value, session.SymmetricKey)
+			secret, err := crypto.AesCBCDecrypt(iv, item.Secret.SecretApi.Value, session.SymmetricKey)
 			if err != nil {
 				log.Errorf("Cannot add item due to decryption error. Error: %v", err)
 				return errors.New("Decryption error: " + err.Error())

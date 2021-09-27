@@ -45,7 +45,7 @@ func NewApp() *AppData {
 	//     ├── db.json
 	//     └── logs
 	//         └── secretserviced.log
-	app.Service.Home = SetupHomeDirectories()
+	app.Service.Config.Home = SetupHomeDirectories()
 
 	// Create a dbus session connection (singleton)
 	connection, err := dbus.SessionBus()
@@ -61,7 +61,8 @@ func NewApp() *AppData {
 // Load configurations and setup logger
 func (app *AppData) Load() {
 	app.Config.Load(app)
-	app.Service.EncryptDatabase = app.Config.Encryption
+	app.Service.Config.AllowDbExport = app.Config.AllowDbExport
+	app.Service.Config.EncryptDatabase = app.Config.Encryption
 	app.SetupLogger()
 }
 

@@ -24,15 +24,16 @@ By using **secret service**, you don't need to use `KeePassXC` _secretservice_ f
 
 There is a `scripts/manage.sh` shellscript that do the job of install/uninstall (run it by `./scripts/manage.sh`) but here are the details:
 
-You need to copy the binary (`secretserviced`, build the project or download it from [releases](https://github.com/yousefvand/secret-service/releases) page) some where usually `/usr/bin` but if you don't have the permission, `~/.local/bin` is OK too. To build the binary from source code:
+You need to copy the binaries (`secretserviced` and `secretservice`, build the project or download it from [releases](https://github.com/yousefvand/secret-service/releases) page) some where usually `/usr/bin` but if you don't have the permission, `~/.local/bin` is OK too. To build the binaries from source code:
 
 ```bash
 git clone https://github.com/yousefvand/secret-service.git
 cd secret-service
 go build -race -o secretserviced cmd/app/secretserviced/main.go
+go build -race -o secretservice cmd/app/secretservice/main.go
 ```
 
-You need a `systemd` **UNIT** file named `secretserviced.service` to put in `/etc/systemd/user` but if you don't have the permission `~/.config/systemd/user` is OK too. Here is a sample **UNIT** file, change `WorkingDirectory` and `ExecStart` according to where you put the binary:
+You need a `systemd` **UNIT** file named `secretserviced.service` to put in `/etc/systemd/user` but if you don't have the permission `~/.config/systemd/user` is OK too. Here is a sample **UNIT** file, change `WorkingDirectory` and `ExecStart` according to where you put the binary (`secretserviced`):
 
 ```config
 [Unit]
@@ -83,6 +84,50 @@ By default all secrets are encrypted with `AES-CBC-256` symmetric algorithm with
 
 If service refuses to start and you see `OS` exit code `5` in logs, it means som other application has taken dbus name `org.freedesktop.secrets` before (such as keyrings), stop that application and try again.
 
+## secretservice
+
+This binary is the `CLI` interface to communicate with `secretserviced` daemon. Supported commands:
+
+### ping
+
+```bash
+secretservice ping
+```
+
+Check if service is up and responsive.
+
+### export db
+
+```bash
+secretservice export db
+```
+
+Export a copy of current db in `~/.secret-service/secretserviced/`. This copy is not encrypted.
+
+### encrypt
+
+```bash
+secretservice encrypt -p|--password 32character-password -i|--input /path/to/input/file/ -o|--output /path/to/output/file/
+```
+
+Encrypts input file using given password. Password should be exactly 32 character. Example:
+
+```bash
+secretservice encrypt -p 012345678901234567890123456789ab -i ~/a.json -o ~/b.json
+```
+
+### decrypt
+
+```bash
+secretservice decrypt -p|--password 32character-password -i|--input /path/to/input/file/ -o|--output /path/to/output/file/
+```
+
+Decrypts input file using given password. Password should be exactly 32 character. Example:
+
+```bash
+secretservice decrypt -p 012345678901234567890123456789ab -i ~/a.json -o ~/b.json
+```
+
 ## Contribution
 
 This project is in its infancy and as it is my first golang project there are many design and code problems. I do appreciate suggestions and **PR**s. If you can get done any item from `TODO` list, you are welcome. This list will be updated based on new insights and user issues.
@@ -96,10 +141,10 @@ In case of sending a **PR** please make sure:
 
 ### TODO
 
- - [ ] Improve CI
+- [ ] Improve CI
 
- - [ ] What's the best way to secure `/etc/systemd/user/secretserviced.service` file
+- [ ] What's the best way to secure `/etc/systemd/user/secretserviced.service` file
 
- - [ ] deb, rpm, AppImage packages
+- [ ] deb, rpm, AppImage packages
 
- - [ ] ...
+- [ ] ...

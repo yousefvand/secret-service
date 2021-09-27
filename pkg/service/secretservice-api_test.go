@@ -19,12 +19,6 @@ func Test_SecretServiceCommand(t *testing.T) {
 			t.Errorf("Expected 'pong' got: %s", response)
 		}
 
-		response, _ = ssClient.SecretServiceCommand("foo", "")
-
-		if response != "bar" {
-			t.Errorf("Expected 'bar' got: %s", response)
-		}
-
 		response, _ = ssClient.SecretServiceCommand("baz", "")
 
 		if response != "unknown" {

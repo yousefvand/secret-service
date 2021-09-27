@@ -3,6 +3,9 @@
 package service
 
 import (
+	"path/filepath"
+	"time"
+
 	"github.com/godbus/dbus/v5"
 	log "github.com/sirupsen/logrus"
 )
@@ -30,8 +33,16 @@ func (service *Service) Command(command string, params string) (string, *dbus.Er
 	switch command {
 	case "ping":
 		return "pong", nil
-	case "foo":
-		return "bar", nil
+	case "export database":
+		if !service.Config.AllowDbExport {
+			return "verboten", nil
+		}
+		dbFile := filepath.Join(service.Config.Home, time.Now().Format("2006.01.02-15:04:05")+"-"+"db.json")
+		store := service.Config.EncryptDatabase
+		service.Config.EncryptDatabase = false
+		service.Config.EncryptDatabase = store
+		Marshal(service, dbFile)
+		return "ok", nil
 	default:
 		return "unknown", nil
 	}

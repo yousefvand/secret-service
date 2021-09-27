@@ -18,6 +18,7 @@ import (
 func New() *Service {
 	service := new(Service)
 	service.Connection = nil
+	service.Config = &ServiceConfig{}
 	// service.LockMutex = new(sync.Mutex) // TODO: Remove
 	service.SessionsMutex = new(sync.RWMutex)
 	service.CollectionsMutex = new(sync.RWMutex)
@@ -261,7 +262,7 @@ func (s *Service) UpdatePropertyCollections() {
 // ReadPasswordFile returns contents of 'password.yaml' file if exists otherwise empty string
 func (service *Service) ReadPasswordFile() string {
 
-	passwordFilePath := filepath.Join(service.Home, "password.yaml")
+	passwordFilePath := filepath.Join(service.Config.Home, "password.yaml")
 	exist, err := fileOrFolderExists(passwordFilePath)
 
 	if err != nil {
@@ -303,7 +304,7 @@ version: ` + version + `
 # Password hash: sha512(salt+password)
 passwordHash: '` + passwordHash + `'`)
 
-	passwordFile := filepath.Join(service.Home, "password.yaml")
+	passwordFile := filepath.Join(service.Config.Home, "password.yaml")
 	errWritePasswordFile := ioutil.WriteFile(passwordFile, content, 0600)
 
 	if errWritePasswordFile != nil {
