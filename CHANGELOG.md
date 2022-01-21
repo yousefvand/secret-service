@@ -1,5 +1,11 @@
 # Change Log
 
+## Release: January 21, 2021
+
+### secretserviced v0.2.1
+
+- fixed collection path types (thanks to kainz)
+
 ## Release: September 27, 2021
 
 ### secretserviced v0.2.0
