@@ -268,11 +268,11 @@ func (collection *Collection) UpdateModified() {
 // UpdatePropertyCollections updates dbus property of this collection's items
 func (collection *Collection) UpdatePropertyCollectionItems() {
 
-	var items []string
+	var items []dbus.ObjectPath
 
 	collection.ItemsMutex.RLock()
 	for _, item := range collection.Items {
-		items = append(items, string(item.ObjectPath))
+		items = append(items, item.ObjectPath)
 	}
 	collection.ItemsMutex.RUnlock()
 

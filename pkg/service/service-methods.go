@@ -246,13 +246,13 @@ func (service *Service) GetItemByPath(itemPath dbus.ObjectPath) *Item {
 // UpdatePropertyCollections updates dbus properties of Service
 func (s *Service) UpdatePropertyCollections() {
 
-	var collections []string
+	var collections []dbus.ObjectPath
 
 	s.CollectionsMutex.RLock()
 	defer s.CollectionsMutex.RUnlock()
 
 	for _, collection := range s.Collections {
-		collections = append(collections, string(collection.ObjectPath))
+		collections = append(collections, collection.ObjectPath)
 	}
 
 	PropsService.SetMust("org.freedesktop.Secret.Service",
