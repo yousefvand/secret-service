@@ -225,11 +225,16 @@ func (collection *Collection) PropertyGetItems() ([]string, error) {
 		return []string{}, fmt.Errorf("failed to read 'Items' property. Error: %v", err)
 	}
 
-	items, ok := variant.Value().([]string)
+	pathitems, ok := variant.Value().([]dbus.ObjectPath)
 
 	if !ok {
-		return []string{}, fmt.Errorf("expected 'Items' to be of type '[]string', got: '%T'",
+		return []string{}, fmt.Errorf("expected 'Items' to be of type '[]dbus.ObjectPath', got: '%T'",
 			variant.Value())
+	}
+
+	var items []string
+	for k := range pathitems {
+		items = append(items, string(pathitems[k]))
 	}
 
 	sort.Strings(items)

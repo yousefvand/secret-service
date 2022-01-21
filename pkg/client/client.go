@@ -215,10 +215,15 @@ func (client *Client) PropertyGetCollections() ([]string, error) {
 		return nil, errors.New("Error getting property 'Collections': " + err.Error())
 	}
 
-	collections, ok := variant.Value().([]string)
+	collectionspaths, ok := variant.Value().([]dbus.ObjectPath)
 
 	if !ok {
-		return nil, fmt.Errorf("invalid 'Collections' property type. Expected '[]string', got '%T'", variant.Value())
+		return nil, fmt.Errorf("invalid 'Collections' property type. Expected '[]dbus.ObjectPath', got '%T'", variant.Value())
+	}
+
+	var collections []string
+	for k := range collectionspaths {
+		collections = append(collections, string(collectionspaths[k]))
 	}
 
 	sort.Strings(collections)
