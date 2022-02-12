@@ -10,7 +10,7 @@ license=('MIT')
 makedepends=('git' 'go')
 optdepends=('sudo')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v${pkgver}.tar.gz")
-sha256sums=('8cb349bac214e831beb1c271066b51ead296d6dfee70da4533c4c06f22a6dbf6')
+sha256sums=('57519d26b0be943bff6dbce2218b56314cad3b92d544194c01532e14555ae565')
 
 prepare() {
   export GOPATH="$srcdir"/gopath
@@ -31,8 +31,8 @@ package() {
 
   if [ ! -f "$pkgdir/etc/systemd/user/secretserviced.service" ]; then
   
-  password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32 ; echo '')
-  cat >secretserviced.service <<EOF
+    password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32 ; echo '')
+    cat >secretserviced.service <<EOF
 [Unit]
 Description=Service to keep secrets of applications
 Documentation=https://github.com/yousefvand/secret-service
@@ -49,7 +49,7 @@ WorkingDirectory=%h
 ExecStart=/usr/local/bin/secretserviced
 EOF
 
-install -Dm755 secretserviced.service "$pkgdir/etc/systemd/user/secretserviced.service"
+    install -Dm755 secretserviced.service "$pkgdir/etc/systemd/user/secretserviced.service"
 
   fi
 }

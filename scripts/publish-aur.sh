@@ -51,8 +51,8 @@ echo "git clone ssh://aur@aur.archlinux.org/secret-service.git"
 git clone ssh://aur@aur.archlinux.org/secret-service.git
 
 # Necessary???
-echo "git remote add origin: ssh://aur@aur.archlinux.org/secret-service.git"
-git remote add origin ssh://aur@aur.archlinux.org/secret-service.git
+# echo "git remote add origin: ssh://aur@aur.archlinux.org/secret-service.git"
+# git remote add origin ssh://aur@aur.archlinux.org/secret-service.git
 
 echo "checking PKGBUID..."
 result=$(namcap PKGBUID)
@@ -70,7 +70,7 @@ echo "*" > .gitinore
 makepkg --printsrcinfo > .SRCINFO
 
 # git add
-git add -f PKGBUID .SRCINFO
+git add -f PKGBUILD .SRCINFO
 # git commit (version)
 git commit -m "$version"
 # Submit AUR package
