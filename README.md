@@ -57,6 +57,7 @@ ExecStart=/usr/bin/secretserviced
 Now start the service:
 
 ```bash
+systemctl daemon-reload
 systemctl enable --now --user secretserviced.service
 ```
 
