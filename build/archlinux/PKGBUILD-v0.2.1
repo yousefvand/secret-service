@@ -2,7 +2,7 @@
 # Doesn't work, help needed
 
 pkgname=secret-service
-pkgver=0.2.0
+pkgver=0.2.1
 pkgrel=1
 pkgdesc="secret service provides secure ways of storing credentials"
 arch=('i686' 'pentium4' 'x86_64' 'arm' 'armv7h' 'armv6h' 'aarch64')
@@ -11,7 +11,7 @@ license=('MIT')
 makedepends=('git' 'go')
 optdepends=('sudo')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v${pkgver}.tar.gz")
-sha256sums=('edb504501cc4da925adc5b4bddfff4f06a349be1196d94c440cdeba51619bf27')
+sha256sums=('8cb349bac214e831beb1c271066b51ead296d6dfee70da4533c4c06f22a6dbf6')
 
 prepare() {
   export GOPATH="$srcdir"/gopath
@@ -26,11 +26,11 @@ build() {
 
 package() {
   cd "$pkgname-$pkgver"
-  install -Dm755 secretserviced "$pkgdir/usr/bin/secretserviced"
-  install -Dm755 secretservice "$pkgdir/usr/bin/secretservice"
+  install -Dm755 secretserviced "$pkgdir/usr/local/bin/secretserviced"
+  install -Dm755 secretservice "$pkgdir/usr/local/bin/secretservice"
   install -Dm644 LICENSE.md "$pkgdir"/usr/share/licenses/"${pkgname}"/LICENSE
 
-  if [ ! -f "/etc/systemd/user/secretserviced.service" ]; then
+  if [ ! -f "$pkgdir/etc/systemd/user/secretserviced.service" ]; then
   
   password=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 32 ; echo '')
   cat >secretserviced.service <<EOF
@@ -46,8 +46,8 @@ Type=simple
 RestartSec=30
 Restart=always
 Environment="MASTERPASSWORD=$password"
-WorkingDirectory=/usr/bin/
-ExecStart=/usr/bin/secretserviced
+WorkingDirectory=%h
+ExecStart=/usr/local/bin/secretserviced
 EOF
 
 install -Dm755 secretserviced.service "$pkgdir/etc/systemd/user/secretserviced.service"

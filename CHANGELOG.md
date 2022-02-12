@@ -1,6 +1,13 @@
 # Change Log
 
-## Release: January 21, 2021
+## Release: February 12, 2022
+
+### secretserviced v0.2.2
+
+- Dependency update
+- Archlinux AUR
+
+## Release: January 21, 2022
 
 ### secretserviced v0.2.1
 
