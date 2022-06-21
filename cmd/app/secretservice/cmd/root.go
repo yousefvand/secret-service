@@ -16,7 +16,7 @@ var rootCmd = &cobra.Command{
 	Use:   "secretservice",
 	Short: "A CLI interface to communicate with secretserviced daemon",
 	Long: `secretservice provides CLI interface to communicate with
-secretserviced deamon. For example: secretservice export db
+secretserviced daemon. For example: secretservice export db
 will export an unencrypted version of secret-service database.
 
 * Contributors:
