@@ -18,6 +18,7 @@ function install () {
   echo "Creating systemd UNIT file at /etc/systemd/user"
   # Alternatively: ~/.config/systemd/user/
   rm secretserviced
+  rm secretservice
 
   echo
 
@@ -54,8 +55,8 @@ ExecStart=/usr/bin/secretserviced
 
 EOF
 
-echo "enabling service..."
-systemctl enable --now --user secretserviced.service
+# echo "enabling service..."
+# systemctl enable --now --user secretserviced.service
 
 echo "$(tput setaf 2)""Done!""$(tput sgr0)"
 
@@ -63,8 +64,8 @@ echo "$(tput setaf 2)""Done!""$(tput sgr0)"
 
 function uninstall () {
   
-  echo "disabling service..."
-  systemctl disable --now --user secretserviced.service
+  # echo "disabling service..."
+  # systemctl disable --now --user secretserviced.service
   echo "deleting binaries"
   sudo rm /usr/bin/secretserviced
   sudo rm /usr/bin/secretservice

@@ -2,7 +2,8 @@
 
 # Run by: './scripts/publish-aur.sh' from project root
 
-version="v0.1.0"
+# set version here
+version="v0.2.3"
 
 tempAURDirectory="tmp-aur"
 
@@ -19,7 +20,7 @@ mkdir "${tempAURDirectory}"
 cp build/archlinux/PKGBUILD "${tempAURDirectory}"
 echo "$(tput setaf 3)""Changing version""$(tput sgr0)"
 
-sed -i "s/VERSION_PLACEHOLDER/$version/" "${tempAURDirectory}/PKGBUILD"
+sed -i "s/VERSION_PLACEHOLDER/$version/" "${tempAURDirectory}/PKGBUILD" # set version in PKGBUILD
 
 echo
 echo "$(tput setaf 6)"Make sure you have an account on: aur.archlinux.org "$(tput sgr0)"
@@ -50,9 +51,8 @@ cd "$tempAURDirectory" || exit 2
 echo "git clone ssh://aur@aur.archlinux.org/secret-service.git"
 git clone ssh://aur@aur.archlinux.org/secret-service.git
 
-# Necessary???
 # echo "git remote add origin: ssh://aur@aur.archlinux.org/secret-service.git"
-# git remote add origin ssh://aur@aur.archlinux.org/secret-service.git
+git remote add origin ssh://aur@aur.archlinux.org/secret-service.git
 
 echo "checking PKGBUID..."
 result=$(namcap PKGBUID)

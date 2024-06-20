@@ -1,5 +1,12 @@
 # Change Log
 
+## Release: June 20, 2024
+
+### secretserviced v0.2.3
+
+- Dependency update
+- Added provides=("org.freedesktop.secrets") to PKGBUILD
+
 ## Release: February 12, 2022
 
 ### secretserviced v0.2.2
