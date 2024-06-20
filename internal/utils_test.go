@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"io/ioutil"
 	"os"
 	"path"
 	"testing"
@@ -38,7 +37,7 @@ func Test_fileOrFolderExists(t *testing.T) {
 }
 
 func tempFile(t *testing.T) string {
-	file, err := ioutil.TempFile("", "secret-service.*.test")
+	file, err := os.CreateTemp("", "secret-service.*.test")
 	if err != nil {
 		t.Errorf("Temporary file creation failed")
 	}
@@ -47,7 +46,7 @@ func tempFile(t *testing.T) string {
 }
 
 func tempDir(t *testing.T) string {
-	name, err := ioutil.TempDir("", "secret-service-*")
+	name, err := os.MkdirTemp("", "secret-service-*")
 	if err != nil {
 		t.Errorf("Temporary directory creation failed")
 	}

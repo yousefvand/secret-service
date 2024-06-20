@@ -46,6 +46,7 @@ func TestNewSession(t *testing.T) {
 		ssClient, _ := client.New()
 		session, _ := ssClient.OpenSession(client.Plain)
 
+		// FIXME
 		if !reflect.DeepEqual(session, ssClient.GetSessionByPath(session.ObjectPath)) {
 			t.Errorf("session doesn't match at client side: %s", session.ObjectPath)
 		}

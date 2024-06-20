@@ -61,6 +61,7 @@ func TestNewCollection(t *testing.T) {
 		ssClient, _ := client.New()
 		collection, _, _ := ssClient.CreateCollection(properties, "")
 
+		// FIXME
 		if !reflect.DeepEqual(collection, ssClient.GetCollectionByPath(collection.ObjectPath)) {
 			t.Errorf("collection doesn't match at client side: %s", collection.ObjectPath)
 		}

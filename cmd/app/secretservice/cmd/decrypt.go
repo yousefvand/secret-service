@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bufio"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -72,7 +71,7 @@ var decryptCmd = &cobra.Command{
 		}
 
 		fileContent := strings.Join(decrypted, "\n")
-		err = ioutil.WriteFile(output, []byte(fileContent), 0755)
+		err = os.WriteFile(output, []byte(fileContent), 0755)
 		if err != nil {
 			panic("Writing to output file failed: " + output)
 		}
