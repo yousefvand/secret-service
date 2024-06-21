@@ -1,39 +1,56 @@
-name: Go
+name: Test
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ master ]
   pull_request:
-    branches: [ main, dev ]
+    branches: [ master ]
+
+permissions:
+  contents: read
 
 jobs:
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+      - uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.50
+
+  test:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.16', '1.17', '1.18', '1.19', '1.20']
+
     steps:
 
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v2
+    - name: Set up Go
+      uses: actions/setup-go@v3
       with:
-        go-version: ^1.13
+        go-version: ${{ matrix.go-version }}
 
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
-      
+    - name: Checkout
+      uses: actions/checkout@v3
+
     - name: Install dbus
-      run: sudo apt-get install dbus dbus-x11
-      
-    - name: Get dependencies
-      run: |
-        go get -v -t -d ./...
-        if [ -f Gopkg.toml ]; then
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-        fi
+      run: sudo apt-get update && sudo apt-get install dbus dbus-x11
 
     - name: Build
       run: go build -race -v ./...
 
     - name: Test
       run: go test -race -v ./...
+
+  codespell:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - uses: codespell-project/actions-codespell@master
+    

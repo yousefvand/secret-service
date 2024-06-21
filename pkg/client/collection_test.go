@@ -1,10 +1,10 @@
 package client_test
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/godbus/dbus/v5"
+	"github.com/google/go-cmp/cmp"
 	"github.com/yousefvand/secret-service/pkg/client"
 )
 
@@ -62,12 +62,12 @@ func TestNewCollection(t *testing.T) {
 		collection, _, _ := ssClient.CreateCollection(properties, "")
 
 		// FIXME
-		if !reflect.DeepEqual(collection, ssClient.GetCollectionByPath(collection.ObjectPath)) {
+		if !cmp.Equal(ssClient, ssClient.GetCollectionByPath(collection.ObjectPath)) {
 			t.Errorf("collection doesn't match at client side: %s", collection.ObjectPath)
 		}
 
 		if ssClient.GetCollectionByPath("a/b/c") != nil {
-			t.Error("Non existant collection exists!")
+			t.Error("Non existing collection exists!")
 		}
 
 	})

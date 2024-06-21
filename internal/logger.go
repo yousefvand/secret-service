@@ -27,7 +27,7 @@ func SetupLogger(app *AppData) {
 	}
 
 	lumberjackLogger := &lumberjack.Logger{
-		Filename:   app.Config.LogFile,       // Log file abbsolute path
+		Filename:   app.Config.LogFile,       // Log file absolute path
 		MaxSize:    app.Config.LogMaxSize,    // Log file size in MB
 		MaxBackups: app.Config.LogMaxBackups, // Maximum of log file backups
 		MaxAge:     app.Config.LogMaxAge,     // Log file age in days

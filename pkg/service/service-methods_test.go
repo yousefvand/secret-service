@@ -3,7 +3,7 @@ package service_test
 import (
 	"crypto/sha512"
 	"encoding/hex"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 )
@@ -23,7 +23,7 @@ func Test_ReadPasswordFile(t *testing.T) {
 
 		// write empty hash
 		passwordFile := filepath.Join(Service.Config.Home, "password.yaml")
-		errWritePasswordFile := ioutil.WriteFile(passwordFile, emptyPasswordFile, 0600)
+		errWritePasswordFile := os.WriteFile(passwordFile, emptyPasswordFile, 0600)
 
 		if errWritePasswordFile != nil {
 			t.Errorf("Cannot write password file. Error: %v", errWritePasswordFile)
@@ -40,7 +40,7 @@ func Test_ReadPasswordFile(t *testing.T) {
 
 		// write some hash
 		passwordFile := filepath.Join(Service.Config.Home, "password.yaml")
-		errWritePasswordFile := ioutil.WriteFile(passwordFile, fullPasswordFile, 0600)
+		errWritePasswordFile := os.WriteFile(passwordFile, fullPasswordFile, 0600)
 
 		if errWritePasswordFile != nil {
 			t.Errorf("Cannot write password file. Error: %v", errWritePasswordFile)

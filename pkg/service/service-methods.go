@@ -4,7 +4,7 @@ package service
 
 import (
 	"context"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"runtime"
 	"sync"
@@ -76,7 +76,7 @@ func (service *Service) Start(ctx context.Context) {
 
 	getRootName(service.Connection)    // own 'org.freedesktop.secrets' on dbus
 	dbusInitialize(service.Connection) // make initial dbus objects (i.e. /org)
-	/* create deafult collection at: '/org/freedesktop/secrets/aliases/default' */
+	/* create default collection at: '/org/freedesktop/secrets/aliases/default' */
 	epoch := Epoch()
 	DefaultCollection(service, false, epoch, epoch)
 	dbusSecretService(service) // TODO: temp
@@ -91,7 +91,7 @@ func (service *Service) Start(ctx context.Context) {
 
 	<-ctx.Done() // waiting for shutdown signal
 	service.disconnect()
-	log.Info("===== Secret Service gracefully shutted down =====")
+	log.Info("===== Secret Service gracefully shutdown =====")
 	close(service.ServiceShutdownChan)
 }
 
@@ -273,7 +273,7 @@ func (service *Service) ReadPasswordFile() string {
 		return ""
 	}
 
-	data, err := ioutil.ReadFile(passwordFilePath)
+	data, err := os.ReadFile(passwordFilePath)
 
 	if err != nil {
 		log.Warnf("Cannot open 'password.yaml' file at: %s.", passwordFilePath)
@@ -305,7 +305,7 @@ version: ` + version + `
 passwordHash: '` + passwordHash + `'`)
 
 	passwordFile := filepath.Join(service.Config.Home, "password.yaml")
-	errWritePasswordFile := ioutil.WriteFile(passwordFile, content, 0600)
+	errWritePasswordFile := os.WriteFile(passwordFile, content, 0600)
 
 	if errWritePasswordFile != nil {
 		log.Warnf("Cannot write password file. Error: %v", errWritePasswordFile)

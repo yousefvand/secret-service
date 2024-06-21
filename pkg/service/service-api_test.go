@@ -765,7 +765,7 @@ func Test_GetSecrets(t *testing.T) {
 		}
 
 		if defaultCollection.ObjectPath != "/org/freedesktop/secrets/aliases/default" {
-			t.Errorf("Expected defalt path at: '/org/freedesktop/secrets/aliases/default', got: %v", defaultCollection.ObjectPath)
+			t.Errorf("Expected default path at: '/org/freedesktop/secrets/aliases/default', got: %v", defaultCollection.ObjectPath)
 		}
 
 		properties1 := map[string]dbus.Variant{

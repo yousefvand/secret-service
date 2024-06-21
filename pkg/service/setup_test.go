@@ -2,7 +2,6 @@ package service_test
 
 import (
 	"context"
-	"io/ioutil"
 	"os"
 	"testing"
 	"time"
@@ -33,7 +32,7 @@ func TestMain(m *testing.M) {
 	log.SetOutput(lumberjackLogger)
 
 	Service = service.New()
-	Service.Config.Home, _ = ioutil.TempDir("", "secret-service")
+	Service.Config.Home, _ = os.MkdirTemp("", "secret-service")
 	ctx, cancel := context.WithCancel(context.Background())
 	go Service.Start(ctx) // start secret service
 

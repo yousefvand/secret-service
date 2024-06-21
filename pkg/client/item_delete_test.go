@@ -34,7 +34,7 @@ func TestItem_Delete(t *testing.T) {
 		}
 
 		if collection.ObjectPath != "/org/freedesktop/secrets/aliases/default" {
-			t.Errorf("Expected defalt path at: '/org/freedesktop/secrets/aliases/default', got: %v", collection.ObjectPath)
+			t.Errorf("Expected default path at: '/org/freedesktop/secrets/aliases/default', got: %v", collection.ObjectPath)
 		}
 
 		////////////////////////////// item1 //////////////////////////////

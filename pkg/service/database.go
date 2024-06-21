@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
@@ -173,7 +172,7 @@ func RestoreData(service *Service) {
 
 	}
 
-	close(service.DbLoadedChan) // Singal database has loaded
+	close(service.DbLoadedChan) // Signal database has loaded
 	log.Info("Loading data finished successfully")
 }
 
@@ -323,7 +322,7 @@ func Marshal(service *Service, dbFile string) {
 		log.Panicf("Cannot marshal database. Error: %v", err)
 	}
 
-	err = ioutil.WriteFile(dbFile, content, 0600)
+	err = os.WriteFile(dbFile, content, 0600)
 	if err != nil {
 		log.Panicf("Cannot write to database. Error: %v", err)
 	}
@@ -349,7 +348,7 @@ func Unmarshal(dbFile string) *Database {
 		return nil
 	}
 
-	content, err := ioutil.ReadFile(dbFile)
+	content, err := os.ReadFile(dbFile)
 
 	if err != nil {
 		log.Panicf("Cannot read database file at '%s'. Error: %v", dbFile, err)

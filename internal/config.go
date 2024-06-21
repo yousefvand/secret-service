@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -79,12 +78,12 @@ func (config *Config) Load(app *AppData) {
 
 	serviceHome := app.Service.Config.Home
 	filePath := filepath.Join(serviceHome, "config.yaml")
-	data, err := ioutil.ReadFile(filePath)
+	data, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Warnf("Cannot open config file at: %s. Using default config.", filePath)
 		// app.Notify("No config file", "Cannot find config file. Using default configurations.", time.Second*5)
 		createDefaultConfig(serviceHome)
-		data, _ = ioutil.ReadFile(filePath)
+		data, _ = os.ReadFile(filePath)
 	}
 
 	err = yaml.Unmarshal(data, config)
@@ -92,7 +91,7 @@ func (config *Config) Load(app *AppData) {
 		log.Warnf("found malformed config file: '%s'. Using default config.", filePath)
 		app.Notify("Malformed config file", "Config file is malformed. Using default configurations.", time.Second*5)
 		createDefaultConfig(serviceHome)
-		data, _ = ioutil.ReadFile(filePath)
+		data, _ = os.ReadFile(filePath)
 		_ = yaml.Unmarshal(data, config)
 	}
 
@@ -119,7 +118,7 @@ func (config *Config) Save() error {
 		return errParsing
 	}
 
-	errWriting := ioutil.WriteFile(filePath, data, 0600)
+	errWriting := os.WriteFile(filePath, data, 0600)
 	if errWriting != nil {
 		log.Errorf("Cannot save config file at: '%s'. Error: %v", filePath, errWriting)
 		return errWriting
@@ -173,7 +172,7 @@ func createDefaultConfig(appHome string) {
 
 	configFilePath := filepath.Join(appHome, "config.yaml")
 
-	errWriteConfig := ioutil.WriteFile(configFilePath, defaultConfig, 0600)
+	errWriteConfig := os.WriteFile(configFilePath, defaultConfig, 0600)
 
 	if errWriteConfig != nil {
 		log.Panicf("Writing default configurations to '%s' failed. Error: %v",

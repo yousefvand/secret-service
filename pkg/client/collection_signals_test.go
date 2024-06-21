@@ -31,7 +31,7 @@ func Test_Collection_Signals(t *testing.T) {
 		}
 
 		if collection.ObjectPath != "/org/freedesktop/secrets/aliases/default" {
-			t.Errorf("Expected defalt path at: '/org/freedesktop/secrets/aliases/default', got: %v", collection.ObjectPath)
+			t.Errorf("Expected default path at: '/org/freedesktop/secrets/aliases/default', got: %v", collection.ObjectPath)
 		}
 
 		properties := map[string]dbus.Variant{
@@ -107,7 +107,7 @@ func Test_Collection_Signals(t *testing.T) {
 		}
 
 		if collection.ObjectPath != "/org/freedesktop/secrets/aliases/default" {
-			t.Errorf("Expected defalt path at: '/org/freedesktop/secrets/aliases/default', got: %v", collection.ObjectPath)
+			t.Errorf("Expected default path at: '/org/freedesktop/secrets/aliases/default', got: %v", collection.ObjectPath)
 		}
 
 		properties := map[string]dbus.Variant{
@@ -200,7 +200,7 @@ func Test_Collection_Signals(t *testing.T) {
 		}
 
 		if collection.ObjectPath != "/org/freedesktop/secrets/aliases/default" {
-			t.Errorf("Expected defalt path at: '/org/freedesktop/secrets/aliases/default', got: %v", collection.ObjectPath)
+			t.Errorf("Expected default path at: '/org/freedesktop/secrets/aliases/default', got: %v", collection.ObjectPath)
 		}
 
 		properties := map[string]dbus.Variant{

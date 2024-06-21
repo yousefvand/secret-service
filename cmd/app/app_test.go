@@ -18,7 +18,7 @@ func TestRun(t *testing.T) {
 		t.Log("service is up and ready")
 		cancel()
 		<-App.Service.ServiceShutdownChan
-		t.Log("service is shutted down")
+		t.Log("service is shutdown")
 	})
 	// TODO: Test OS signals
 }
