@@ -40,5 +40,6 @@ func TestMain(m *testing.M) {
 	errCode := m.Run()            // run other tests and get the error code if any
 	cancel()                      // shutdown secret service
 	<-Service.ServiceShutdownChan // wait for service to signal shutting down
-	os.Exit(errCode)              // errCode = 0 means no error in tests
+	log.Printf("Exit code is %d in TestMain 2", errCode)
+	os.Exit(errCode) // errCode = 0 means no error in tests
 }

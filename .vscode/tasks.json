@@ -54,6 +54,11 @@
       "command": "rm -f logs/* ; ENV=TEST MASTERPASSWORD=a012345678901234567890123456789z grc go test -race -cover -timeout 60s ./..."
     },
     {
+      "label": "Run tests individually",
+      "type": "shell",
+      "command": "rm -f logs/* ; ENV=TEST MASTERPASSWORD=a012345678901234567890123456789z grc go test -race -v -timeout 60s ./..."
+    },
+    {
       "label": "Run service",
       "type": "shell",
       "command": "MASTERPASSWORD=a012345678901234567890123456789z go run -race ./cmd/app/secretserviced/main.go"

@@ -8,6 +8,6 @@ func Test_main(t *testing.T) {
 
 	t.Run("Cli", func(t *testing.T) {
 		main()
-		t.Log("Cli app not implemented")
+		t.Log("Cli app implemented")
 	})
 }

@@ -31,6 +31,7 @@ func getRootName(connection *dbus.Conn) {
 		log.Infof("Retry #%d failed to acquire 'org.freedesktop.secrets' name on dbus", retry+1)
 	}
 	log.Errorf("'%s' name is already taken on dbus! Exiting...", name)
+	log.Print("Exit code is 5 in getRootName")
 	os.Exit(5)
 
 }
