@@ -1,6 +1,6 @@
 # Secret Service
 
-As of kwalletd6 is officially released, this project is obsolete.
+As of **kwalletd6** is officially released, this project is obsolete.
 
 [![GitHub release](https://img.shields.io/github/release/yousefvand/secret-service.svg?style=plastic)](https://github.com/yousefvand/secret-service/releases)
 [![GitHub license](https://img.shields.io/github/license/yousefvand/secret-service.svg?style=plastic)](https://github.com/yousefvand/secret-service/blob/master/LICENSE.md)
